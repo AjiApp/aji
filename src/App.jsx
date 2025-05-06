@@ -10,31 +10,28 @@ import DiscoverPage from './pages/Discover/Discover';
 import './App.css';
 
 const App = () => {
-  // États pour gérer les différentes fonctionnalités
+  // State management
   const [activePage, setActivePage] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Vérifier si l'appareil est mobile
+  // Check screen size (mobile or desktop)
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     
-    // Vérifier au chargement
-    checkIfMobile();
-    
-    // Vérifier au redimensionnement
-    window.addEventListener('resize', checkIfMobile);
+    checkIfMobile(); // on load
+    window.addEventListener('resize', checkIfMobile); // on resize
     
     return () => {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
   
-  // Gestion du mode sombre
+  // Handle dark mode toggling
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
@@ -45,28 +42,25 @@ const App = () => {
     }
   }, [isDarkMode]);
 
-  // Basculer le mode sombre
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
   
-  // Basculer la recherche
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
   };
   
-  // Basculer le menu mobile
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Fermer le menu mobile lors du changement de page
+  // Close mobile menu when switching pages
   const handlePageChange = (page) => {
     setActivePage(page);
     setIsMobileMenuOpen(false);
   };
 
-  // Rendu des pages
+  // Page rendering logic
   const renderPage = () => {
     switch (activePage) {
       case 'home':
@@ -82,10 +76,8 @@ const App = () => {
       default:
         return (
           <div className="welcome-container">
-            <h2>Bienvenue sur Super App</h2>
-            <p>
-              Sélectionnez une option dans le menu pour commencer.
-            </p>
+            <h2>Welcome to Super App</h2>
+            <p>Select an option from the menu to get started.</p>
           </div>
         );
     }
@@ -93,7 +85,7 @@ const App = () => {
 
   return (
     <div className={`app-container ${isDarkMode ? 'dark' : ''}`}>
-      {/* Sidebar pour desktop */}
+      {/* Sidebar for desktop */}
       {!isMobile && (
         <div className="sidebar-container">
           <Sidebar 
@@ -103,9 +95,9 @@ const App = () => {
         </div>
       )}
       
-      {/* Zone principale */}
+      {/* Main content area */}
       <div className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
-        {/* Header */}
+        {/* Top Header */}
         <Header 
           isDarkMode={isDarkMode}
           toggleDarkMode={toggleDarkMode}
@@ -114,7 +106,7 @@ const App = () => {
           isMobile={isMobile}
         />
         
-        {/* Menu mobile */}
+        {/* Mobile Sidebar menu */}
         {isMobile && isMobileMenuOpen && (
           <div className="mobile-menu-overlay">
             <Sidebar 
@@ -126,13 +118,13 @@ const App = () => {
           </div>
         )}
         
-        {/* Barre de recherche */}
+        {/* Search bar */}
         {isSearchOpen && (
           <div className="search-bar">
             <div className="search-input-container">
               <input
                 type="text"
-                placeholder="Rechercher..."
+                placeholder="Search..."
                 className="search-input"
                 autoFocus
               />
@@ -140,12 +132,12 @@ const App = () => {
           </div>
         )}
         
-        {/* Zone de contenu principal */}
+        {/* Page content */}
         <div className="content-area">
           {renderPage()}
         </div>
         
-        {/* Navigation mobile en bas */}
+        {/* Mobile Bottom Navbar */}
         {isMobile && (
           <MobileNavbar 
             active={activePage}

@@ -2,30 +2,30 @@ import './Features.css';
 
 const FeaturesPage = () => {
   const popularFeatures = [
-    "Recherche avancée",
-    "Notifications en temps réel",
-    "Tableau de bord personnalisable",
-    "Mode hors ligne",
-    "Synchronisation multi-appareils"
+    "Advanced Search",
+    "Real-Time Notifications",
+    "Customizable Dashboard",
+    "Offline Mode",
+    "Multi-Device Sync"
   ];
 
   return (
     <div className="features-page">
-      <h1 className="page-title">Fonctionnalités</h1>
+      <h1 className="page-title">Features</h1>
       
       <div className="features-grid">
         <div className="add-content-card">
-          <h3 className="section-title">Ajouter un contenu</h3>
+          <h3 className="section-title">Add New Content</h3>
           
           <form className="content-form">
             <div className="form-group">
-              <label className="form-label">Titre</label>
-              <input type="text" className="form-input" />
+              <label className="form-label">Title</label>
+              <input type="text" className="form-input" placeholder="Enter a title..." />
             </div>
             
             <div className="form-group">
               <label className="form-label">Description</label>
-              <textarea rows="4" className="form-textarea"></textarea>
+              <textarea rows="4" className="form-textarea" placeholder="Write a short description..."></textarea>
             </div>
             
             <div className="form-group">
@@ -34,14 +34,14 @@ const FeaturesPage = () => {
             </div>
             
             <button className="submit-button">
-              Soumettre
+              Submit
             </button>
           </form>
         </div>
         
         <div className="features-column">
           <div className="popular-features-card">
-            <h3 className="section-title">Fonctionnalités populaires</h3>
+            <h3 className="section-title">Popular Features</h3>
             
             <ul className="popular-features-list">
               {popularFeatures.map((feature, index) => (
@@ -54,12 +54,12 @@ const FeaturesPage = () => {
           </div>
           
           <div className="support-card">
-            <h3 className="support-title">Besoin d'aide ?</h3>
+            <h3 className="support-title">Need Help?</h3>
             <p className="support-text">
-              Notre équipe de support est disponible 24/7 pour vous aider
+              Our support team is available 24/7 to assist you.
             </p>
             <button className="support-button">
-              Contacter le support
+              Contact Support
             </button>
           </div>
         </div>

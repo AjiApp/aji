@@ -1,23 +1,28 @@
 .home-page {
-    padding: 16px;
+    padding: 24px;
+    background-color: #f8fafc;
+  }
+  
+  :root.dark .home-page {
+    background-color: #0f172a;
   }
   
   .page-title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 24px;
-    color: var(--text-primary-light);
+    color: #111827;
   }
   
   :root.dark .page-title {
-    color: var(--text-primary-dark);
+    color: #f9fafb;
   }
   
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 24px;
+    margin-bottom: 30px;
   }
   
   @media (min-width: 768px) {
@@ -27,138 +32,126 @@
   }
   
   .stat-card {
-    background-color: var(--bg-card-light);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    text-align: center;
   }
   
   :root.dark .stat-card {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
-  }
-  
-  .stat-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
+    background-color: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
   
   .stat-icon {
-    font-size: 20px;
-    margin-right: 8px;
+    font-size: 24px;
+    margin-bottom: 8px;
   }
   
   .stat-label {
-    font-size: 14px;
-    color: var(--text-muted-light);
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 12px;
   }
   
   :root.dark .stat-label {
-    color: var(--text-muted-dark);
+    color: #9ca3af;
   }
   
   .stat-value {
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 700;
     margin-bottom: 4px;
-    color: var(--primary);
+    color: #111827;
   }
   
   :root.dark .stat-value {
-    color: var(--primary-light);
+    color: #f9fafb;
   }
   
   .stat-change {
     font-size: 14px;
-    color: var(--success);
+    color: #10b981;
     font-weight: 500;
   }
   
   .welcome-card {
-    background: linear-gradient(135deg, #fff, #f3f4f6);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    padding: 20px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
+    background-color: white;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   :root.dark .welcome-card {
-    background: linear-gradient(135deg, #1f2937, #111827);
-    border-color: var(--border-dark);
+    background-color: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
   
   .welcome-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--text-primary-light);
+    margin-bottom: 16px;
+    color: #111827;
   }
   
   :root.dark .welcome-title {
-    color: var(--text-primary-dark);
+    color: #f9fafb;
   }
   
   .welcome-text {
-    margin-bottom: 16px;
-    color: var(--text-secondary-light);
-    line-height: 1.5;
+    margin-bottom: 24px;
+    color: #4b5563;
+    line-height: 1.6;
   }
   
   :root.dark .welcome-text {
-    color: var(--text-secondary-dark);
+    color: #d1d5db;
   }
   
   .whats-new {
-    border-top: 1px solid var(--border-light);
-    padding-top: 16px;
-    margin-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
   }
   
   :root.dark .whats-new {
-    border-color: var(--border-dark);
+    border-color: #374151;
   }
   
   .whats-new-title {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-primary-light);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #111827;
   }
   
   :root.dark .whats-new-title {
-    color: var(--text-primary-dark);
+    color: #f9fafb;
   }
   
   .features-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 12px;
   }
   
   .feature-item {
     display: flex;
     align-items: center;
-    color: var(--text-secondary-light);
+    color: #4b5563;
   }
   
   :root.dark .feature-item {
-    color: var(--text-secondary-dark);
+    color: #d1d5db;
   }
   
   .feature-bullet {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background-color: var(--primary);
-    margin-right: 10px;
-    box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+    background-color: #3b82f6;
+    margin-right: 12px;
+    display: inline-block;
   }

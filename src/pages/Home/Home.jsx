@@ -20,10 +20,8 @@ const HomePage = () => {
       <div className="stats-grid">
         {stats.map((stat, index) => (
           <div key={index} className="stat-card">
-            <div className="stat-header">
-              <span className="stat-icon">{stat.icon}</span>
-              <span className="stat-label">{stat.label}</span>
-            </div>
+            <div className="stat-icon">{stat.icon}</div>
+            <div className="stat-label">{stat.label}</div>
             <div className="stat-value">{stat.value}</div>
             <div className="stat-change">{stat.change}</div>
           </div>

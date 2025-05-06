@@ -1,36 +1,41 @@
 .header {
-    background-color: var(--bg-card-light);
-    border-bottom: 1px solid var(--border-light);
-    padding: 16px;
+    background-color: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--header-height);
+    height: 64px;
   }
   
   :root.dark .header {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
+    background-color: #1f2937;
+    border-color: #374151;
   }
   
   .header-logo {
     font-size: 18px;
     font-weight: 600;
-    color: var(--primary);
+    color: #111827;
+  }
+  
+  :root.dark .header-logo {
+    color: white;
   }
   
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
   }
   
   .header-icon-button {
-    padding: 8px;
-    border-radius: var(--radius-md);
-    color: var(--text-secondary-light);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #4b5563;
     background-color: transparent;
-    transition: background-color var(--transition-fast);
+    transition: background-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,15 +43,15 @@
   }
   
   :root.dark .header-icon-button {
-    color: var(--text-secondary-dark);
+    color: #d1d5db;
   }
   
   .header-icon-button:hover {
-    background-color: var(--bg-light);
+    background-color: #f3f4f6;
   }
   
   :root.dark .header-icon-button:hover {
-    background-color: var(--bg-input-dark);
+    background-color: #374151;
   }
   
   .notification-button {
@@ -55,12 +60,12 @@
   
   .notification-badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 10px;
+    right: 10px;
     width: 8px;
     height: 8px;
-    background-color: var(--error);
-    border-radius: var(--radius-full);
+    background-color: #ef4444;
+    border-radius: 50%;
   }
   
   /* Adaptations pour mobile */
@@ -71,10 +76,11 @@
     }
     
     .header-actions {
-      gap: 4px;
+      gap: 8px;
     }
     
     .header-icon-button {
-      padding: 6px;
+      width: 36px;
+      height: 36px;
     }
   }

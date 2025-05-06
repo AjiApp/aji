@@ -25,9 +25,9 @@ const Header = ({ isDarkMode, toggleDarkMode, toggleSearch, toggleMobileMenu, is
           <span className="notification-badge"></span>
         </button>
         
-        <button className="header-icon-button" onClick={toggleDarkMode}>
+        {/*<button className="header-icon-button" onClick={toggleDarkMode}>
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+        </button>*/}
       </div>
     </header>
   );

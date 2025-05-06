@@ -1,120 +1,129 @@
+/* Sidebar.css */
+
+/* --- Global Styles --- */
 .sidebar {
-    background-color: var(--bg-card-light);
-    border-right: 1px solid var(--border-light);
-    height: 100%;
+    width: 260px;
+    background: #ffffff;
+    height: 100vh;
+    padding: 1.5rem 1rem;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    width: var(--sidebar-width);
-  }
-  
-  :root.dark .sidebar {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
-  }
-  
-  .sidebar-header {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-light);
-    display: flex;
-    align-items: center;
     justify-content: space-between;
+    transition: transform 0.3s ease-in-out;
+    border-right: 1px solid #e5e7eb;
+    position: relative;
+    z-index: 1000;
   }
   
-  :root.dark .sidebar-header {
-    border-color: var(--border-dark);
+  /* --- Mobile Mode --- */
+  .sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #ffffff;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .slide-in-left {
+    transform: translateX(0);
+  }
+  
+  /* --- Header --- */
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
   }
   
   .sidebar-title {
+    font-size: 1.4rem;
     font-weight: 700;
-    font-size: 20px;
-    color: var(--primary);
+    color: #111827;
   }
   
   .sidebar-close-button {
-    color: var(--text-secondary-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border-radius: var(--radius-md);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s ease-in-out;
+  }
+  .sidebar-close-button:hover {
+    color: #111827;
   }
   
-  :root.dark .sidebar-close-button {
-    color: var(--text-secondary-dark);
-  }
-  
+  /* --- Navigation Menu --- */
   .sidebar-nav {
-    padding: 8px;
-    flex: 1;
-    overflow-y: auto;
+    flex-grow: 1;
   }
   
   .sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-menu-item {
+    margin-bottom: 0.8rem;
   }
   
   .sidebar-menu-button {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 12px 16px;
-    border-radius: var(--radius-md);
-    text-align: left;
-    transition: all var(--transition-fast);
-    color: var(--text-secondary-light);
-  }
-  
-  :root.dark .sidebar-menu-button {
-    color: var(--text-secondary-dark);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
   }
   
   .sidebar-menu-button:hover {
-    background-color: var(--bg-light);
-  }
-  
-  :root.dark .sidebar-menu-button:hover {
-    background-color: var(--bg-input-dark);
+    background-color: #f3f4f6;
+    color: #111827;
   }
   
   .sidebar-menu-button.active {
-    background-color: rgba(59, 130, 246, 0.1);
-    color: var(--primary);
-    font-weight: 500;
-    border-left: 4px solid var(--primary);
-  }
-  
-  :root.dark .sidebar-menu-button.active {
-    background-color: rgba(59, 130, 246, 0.2);
+    background-color: #f97316; /* orange-500 */
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px #f97316;
   }
   
   .sidebar-menu-icon {
-    margin-right: 12px;
-    font-size: 18px;
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
   }
   
+  /* --- Footer --- */
   .sidebar-footer {
-    padding: 16px;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
     text-align: center;
-    font-size: 14px;
-    color: var(--text-muted-light);
-    border-top: 1px solid var(--border-light);
+    font-size: 0.875rem;
+    color: #9ca3af;
   }
   
-  :root.dark .sidebar-footer {
-    color: var(--text-muted-dark);
-    border-color: var(--border-dark);
+  /* --- Responsive: hide on small screens --- */
+  @media (max-width: 640px) {
+    .sidebar {
+      display: none;
+    }
+  
+    .sidebar.sidebar-mobile {
+      display: flex;
+      flex-direction: column;
+    }
   }
   
-  /* Version mobile */
-  .sidebar-mobile {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 30;
-    width: 80%;
-    max-width: 300px;
-    box-shadow: var(--shadow-lg);
-  }

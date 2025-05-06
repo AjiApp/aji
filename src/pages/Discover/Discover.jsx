@@ -2,49 +2,49 @@ import './Discover.css';
 
 const DiscoverPage = () => {
   const categories = [
-    { id: 'all', name: 'Tous' },
-    { id: 'beaches', name: 'Plages' }, 
-    { id: 'mountains', name: 'Montagnes' }, 
-    { id: 'desert', name: 'Désert' }, 
-    { id: 'historical', name: 'Villes historiques' }, 
-    { id: 'crafts', name: 'Artisanat' }, 
-    { id: 'food', name: 'Gastronomie' }
+    { id: 'all', name: 'All' },
+    { id: 'beaches', name: 'Beaches' }, 
+    { id: 'mountains', name: 'Mountains' }, 
+    { id: 'desert', name: 'Desert' }, 
+    { id: 'historical', name: 'Historical Cities' }, 
+    { id: 'crafts', name: 'Handicrafts' }, 
+    { id: 'food', name: 'Gastronomy' }
   ];
 
   const destinations = [
     { 
       id: '1', 
-      title: 'Désert du Sahara', 
-      description: 'Explorez les magnifiques dunes de sable',
-      location: 'Merzouga, Maroc',
+      title: 'Sahara Desert', 
+      description: 'Explore the stunning sand dunes',
+      location: 'Merzouga, Morocco',
       rating: 4.9
     },
     { 
       id: '2', 
       title: 'Chefchaouen', 
-      description: 'Découvrez la fameuse ville bleue',
-      location: 'Chefchaouen, Maroc',
+      description: 'Discover the famous blue city',
+      location: 'Chefchaouen, Morocco',
       rating: 4.8
     },
     { 
       id: '3', 
-      title: 'Jardins Majorelle', 
-      description: 'Visitez ces jardins botaniques uniques',
-      location: 'Marrakech, Maroc',
+      title: 'Majorelle Gardens', 
+      description: 'Visit this unique botanical garden',
+      location: 'Marrakech, Morocco',
       rating: 4.7
     },
     { 
       id: '4', 
-      title: 'Médina de Fès', 
-      description: 'Plongez dans cette médina historique',
-      location: 'Fès, Maroc',
+      title: 'Fes Medina', 
+      description: 'Step into this historic medina',
+      location: 'Fes, Morocco',
       rating: 4.6
     }
   ];
 
   return (
     <div className="discover-page">
-      <h1 className="page-title">Découvrir le Maroc</h1>
+      <h1 className="page-title">Discover Morocco</h1>
       
       <div className="categories-container">
         <div className="categories-scrollable">
@@ -61,9 +61,9 @@ const DiscoverPage = () => {
       
       <div className="section">
         <div className="section-header">
-          <h2 className="section-title">Destinations populaires</h2>
+          <h2 className="section-title">Popular Destinations</h2>
           <a href="#" className="see-all-link">
-            Voir tout <span className="arrow-icon">→</span>
+            See all <span className="arrow-icon">→</span>
           </a>
         </div>
         
@@ -89,18 +89,7 @@ const DiscoverPage = () => {
         </div>
       </div>
       
-      <div className="special-offer-banner">
-        <div className="offer-content">
-          <div>
-            <h3 className="offer-title">Offre spéciale</h3>
-            <p className="offer-description">20% de réduction sur toutes les réservations d'excursions désert</p>
-            <p className="offer-expiry">Offre valable jusqu'au 31 mai 2025</p>
-          </div>
-          <button className="offer-button">
-            En savoir plus
-          </button>
-        </div>
-      </div>
+     
     </div>
   );
 };

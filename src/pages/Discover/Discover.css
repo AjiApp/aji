@@ -1,243 +1,138 @@
+/* Discover.css */
+
 .discover-page {
-    padding: 16px;
+    padding: 2rem;
+    background-color: #f9fafb;
+    font-family: 'Inter', sans-serif;
   }
   
   .page-title {
-    font-size: 24px;
+    font-size: 2.25rem;
     font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .page-title {
-    color: var(--text-primary-dark);
+    color: #111827;
+    margin-bottom: 1.5rem;
   }
   
   .categories-container {
-    margin-bottom: 24px;
+    margin-bottom: 2rem;
     overflow-x: auto;
-    padding-bottom: 8px;
   }
   
   .categories-scrollable {
     display: flex;
-    gap: 8px;
-    min-width: max-content;
+    gap: 1rem;
   }
   
   .category-button {
-    padding: 8px 12px;
-    border-radius: var(--radius-full);
-    font-size: 14px;
-    background-color: var(--bg-card-light);
-    color: var(--text-secondary-light);
-    border: 1px solid var(--border-light);
+    padding: 0.5rem 1rem;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 999px;
+    font-weight: 500;
+    color: #374151;
+    transition: background 0.3s ease;
     white-space: nowrap;
+    cursor: pointer;
   }
   
-  :root.dark .category-button {
-    background-color: var(--bg-card-dark);
-    color: var(--text-secondary-dark);
-    border-color: var(--border-dark);
-  }
-  
-  .category-button.active {
-    background-color: var(--primary);
+  .category-button.active,
+  .category-button:hover {
+    background: #2563eb;
     color: white;
-    border-color: var(--primary);
   }
   
   .section {
-    margin-bottom: 24px;
+    margin-bottom: 3rem;
   }
   
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
   
   .section-title {
-    font-size: 20px;
+    font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .section-title {
-    color: var(--text-primary-dark);
+    color: #111827;
   }
   
   .see-all-link {
-    display: flex;
-    align-items: center;
-    color: var(--primary);
-    font-size: 14px;
+    font-size: 0.95rem;
+    color: #3b82f6;
     font-weight: 500;
     text-decoration: none;
   }
   
-  .arrow-icon {
-    margin-left: 4px;
-  }
-  
   .destinations-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
-  }
-  
-  @media (min-width: 640px) {
-    .destinations-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .destinations-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
   }
   
   .destination-card {
-    background-color: var(--bg-card-light);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
+    background: #fff;
+    border-radius: 1rem;
     overflow: hidden;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-  
-  :root.dark .destination-card {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
   }
   
   .destination-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
   }
   
   .destination-image {
-    height: 128px;
-    background-color: var(--bg-light);
     position: relative;
-  }
-  
-  :root.dark .destination-image {
-    background-color: var(--bg-dark);
   }
   
   .destination-image img {
     width: 100%;
-    height: 100%;
+    height: 160px;
     object-fit: cover;
   }
   
   .destination-rating {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: white;
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: var(--radius-md);
-  }
-  
-  :root.dark .destination-rating {
-    background-color: var(--bg-card-dark);
+    bottom: 0.5rem;
+    right: 0.5rem;
+    background-color: #10b981;
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
   
   .destination-details {
-    padding: 12px;
+    padding: 1rem;
   }
   
   .destination-title {
-    font-size: 16px;
+    font-size: 1.125rem;
     font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .destination-title {
-    color: var(--text-primary-dark);
+    margin-bottom: 0.3rem;
+    color: #111827;
   }
   
   .destination-description {
-    font-size: 14px;
-    color: var(--text-secondary-light);
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-  
-  :root.dark .destination-description {
-    color: var(--text-secondary-dark);
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
   }
   
   .destination-location {
     display: flex;
     align-items: center;
-    color: var(--text-muted-light);
-    font-size: 12px;
-  }
-  
-  :root.dark .destination-location {
-    color: var(--text-muted-dark);
+    color: #4b5563;
+    font-size: 0.9rem;
   }
   
   .location-icon {
-    margin-right: 4px;
+    margin-right: 0.4rem;
   }
   
-  .special-offer-banner {
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    border-radius: var(--radius-md);
-    padding: 16px;
-    margin-bottom: 24px;
-    color: white;
-  }
   
-  .offer-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
   
-  @media (min-width: 768px) {
-    .offer-content {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
   
-  .offer-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  
-  .offer-description {
-    opacity: 0.9;
-    margin-bottom: 4px;
-  }
-  
-  .offer-expiry {
-    font-size: 14px;
-    opacity: 0.8;
-  }
-  
-  .offer-button {
-    background-color: white;
-    color: var(--primary);
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: opacity var(--transition-fast);
-    align-self: flex-start;
-  }
-  
-  .offer-button:hover {
-    opacity: 0.9;
-  }

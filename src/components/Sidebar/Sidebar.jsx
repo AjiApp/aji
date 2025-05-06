@@ -3,11 +3,11 @@ import './Sidebar.css';
 
 const Sidebar = ({ active, setActivePage, isMobile = false, closeMobileMenu }) => {
   const menu = [
-    { id: 'home', label: 'Accueil', icon: '🏠' },
-    { id: 'features', label: 'Fonctionnalités', icon: '📄' },
+    { id: 'home', label: 'Home', icon: '🏠' },
+    { id: 'features', label: 'Features', icon: '📄' },
     { id: 'services', label: 'Services', icon: '🌐' },
-    { id: 'events', label: 'Événements', icon: '📅' },
-    { id: 'discover', label: 'Découvrir', icon: '🧭' },
+    { id: 'events', label: 'Events', icon: '📅' },
+    { id: 'discover', label: 'Discover', icon: '🧭' },
   ];
 
   return (

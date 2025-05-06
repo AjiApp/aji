@@ -1,211 +1,156 @@
 .events-page {
-    padding: 16px;
-  }
-  
-  .events-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .page-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .page-title {
-    color: var(--text-primary-dark);
-  }
-  
-  .primary-button {
-    background-color: var(--primary);
-    color: white;
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: background-color var(--transition-fast);
-  }
-  
-  .primary-button:hover {
-    background-color: var(--primary-hover);
-  }
-  
+  padding: 24px;
+  background-color: #f8fafc;
+}
+
+:root.dark .events-page {
+  background-color: #0f172a00;
+}
+
+.events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+:root.dark .page-title {
+  color: #f9fafb;
+}
+
+.primary-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #2563eb;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
   .events-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  @media (min-width: 768px) {
-    .events-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  .event-card {
-    background-color: var(--bg-card-light);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-  
-  :root.dark .event-card {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
-  }
-  
-  .event-image {
-    height: 160px;
-    background-color: var(--bg-light);
-    position: relative;
-  }
-  
-  :root.dark .event-image {
-    background-color: var(--bg-dark);
-  }
-  
-  .event-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .event-date
-  .events-page {
-    padding: 16px;
-  }
-  
-  .events-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .page-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .page-title {
-    color: var(--text-primary-dark);
-  }
-  
-  .primary-button {
-    background-color: var(--primary);
-    color: white;
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: background-color var(--transition-fast);
-  }
-  
-  .primary-button:hover {
-    background-color: var(--primary-hover);
-  }
-  
-  .events-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  @media (min-width: 768px) {
-    .events-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  .event-card {
-    background-color: var(--bg-card-light);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-  
-  :root.dark .event-card {
-    background-color: var(--bg-card-dark);
-    border-color: var(--border-dark);
-  }
-  
-  .event-image {
-    height: 160px;
-    background-color: var(--bg-light);
-    position: relative;
-  }
-  
-  :root.dark .event-image {
-    background-color: var(--bg-dark);
-  }
-  
-  .event-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .event-date {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background-color: var(--primary);
-    color: white;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: var(--radius-full);
-  }
-  
-  .event-details {
-    padding: 16px;
-  }
-  
-  .event-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--text-primary-light);
-  }
-  
-  :root.dark .event-title {
-    color: var(--text-primary-dark);
-  }
-  
-  .event-description {
-    font-size: 14px;
-    color: var(--text-secondary-light);
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  
-  :root.dark .event-description {
-    color: var(--text-secondary-dark);
-  }
-  
-  .event-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-  }
-  
-  .event-location {
-    display: flex;
-    align-items: center;
-    color: var(--text-muted-light);
-  }
-  
-  :root.dark .event-location {
-    color: var(--text-muted-dark);
-  }
-  
-  .location-icon {
-    margin-right: 4px;
-  }
-  
-  .event-price {
-    font-weight: 500;
-    color: var(--primary);
-  }
+}
+
+.event-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+:root.dark .event-card {
+  background-color: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark .event-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
+.event-image {
+  height: 160px;
+  background-color: #e5e7eb;
+  position: relative;
+}
+
+:root.dark .event-image {
+  background-color: #374151;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-date {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.event-details {
+  padding: 20px;
+}
+
+.event-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+:root.dark .event-title {
+  color: #f9fafb;
+}
+
+.event-description {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+:root.dark .event-description {
+  color: #d1d5db;
+}
+
+.event-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.event-location {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+}
+
+:root.dark .event-location {
+  color: #9ca3af;
+}
+
+.location-icon {
+  margin-right: 6px;
+}
+
+.event-price {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+:root.dark .event-price {
+  color: #60a5fa;
+}
