@@ -1,0 +1,63 @@
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: margin-left var(--transition-normal);
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Écran d'accueil quand aucune page n'est sélectionnée */
+.welcome-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  padding: var(--spacing-xl);
+  animation: fadeIn var(--transition-normal);
+}
+
+.welcome-placeholder h2 {
+  font-size: 1.75rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+}
+
+.welcome-placeholder p {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  max-width: 600px;
+}
+
+body.dark-mode .welcome-placeholder h2 {
+  color: var(--color-primary-light);
+}
+
+body.dark-mode .welcome-placeholder p {
+  color: var(--color-dark-text-light);
+}
+
+/* Animation d'entrée pour les pages */
+.content-area > div {
+  animation: fadeIn var(--transition-normal);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+}

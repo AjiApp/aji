@@ -1,0 +1,324 @@
+.discover-page {
+    padding: var(--spacing-lg);
+    animation: fadeIn var(--transition-normal);
+  }
+  
+  .discover-title {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  /* Catégories */
+  .categories-container {
+    overflow-x: auto;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .categories-list {
+    display: flex;
+    gap: var(--spacing-sm);
+    min-width: max-content;
+  }
+  
+  .category-button {
+    background-color: white;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-full);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+  }
+  
+  .category-button:hover {
+    background-color: #f3f4f6;
+    color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .category-button.active {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+  
+  body.dark-mode .category-button {
+    background-color: var(--color-dark-surface);
+    color: var(--color-dark-text);
+    border-color: var(--color-dark-border);
+  }
+  
+  body.dark-mode .category-button:hover {
+    background-color: var(--color-dark-surface);
+    color: var(--color-primary-light);
+  }
+  
+  body.dark-mode .category-button.active {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+  
+  /* Section des destinations */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+  }
+  
+  body.dark-mode .section-title {
+    color: var(--color-dark-text);
+  }
+  
+  .view-all-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-primary);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    transition: gap var(--transition-fast);
+  }
+  
+  .view-all-link:hover {
+    gap: var(--spacing-sm);
+  }
+  
+  body.dark-mode .view-all-link {
+    color: var(--color-primary-light);
+  }
+  
+  /* Grille des destinations */
+  .destinations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .destination-card {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  }
+  
+  .destination-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  body.dark-mode .destination-card {
+    background-color: var(--color-dark-surface);
+  }
+  
+  .destination-image {
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .destination-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+  
+  .destination-card:hover .destination-image img {
+    transform: scale(1.05);
+  }
+  
+  .destination-rating {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background-color: white;
+    color: var(--color-primary);
+    padding: 2px var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-bold);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  
+  body.dark-mode .destination-rating {
+    background-color: var(--color-dark-surface);
+    color: var(--color-primary-light);
+  }
+  
+  .destination-content {
+    padding: var(--spacing-md);
+  }
+  
+  .destination-title {
+    font-size: 1.125rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text);
+  }
+  
+  body.dark-mode .destination-title {
+    color: var(--color-dark-text);
+  }
+  
+  .destination-description {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.5;
+  }
+  
+  body.dark-mode .destination-description {
+    color: var(--color-dark-text-light);
+  }
+  
+  .destination-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+  }
+  
+  body.dark-mode .destination-location {
+    color: var(--color-dark-text-light);
+  }
+  
+  /* Bannière promotionnelle */
+  .promo-banner {
+    background: linear-gradient(to right, var(--color-primary), #4f46e5);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    color: white;
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .promo-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .promo-info {
+    flex: 1;
+  }
+  
+  .promo-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .promo-text {
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .promo-date {
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+  
+  .promo-button {
+    background-color: white;
+    color: var(--color-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    border: none;
+    transition: background-color var(--transition-fast), 
+                transform var(--transition-fast);
+  }
+  
+  .promo-button:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+  }
+  
+  /* Guide interactif */
+  .guide-card {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+  }
+  
+  body.dark-mode .guide-card {
+    background-color: var(--color-dark-surface);
+  }
+  
+  .guide-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
+  }
+  
+  body.dark-mode .guide-title {
+    color: var(--color-dark-text);
+  }
+  
+  .guide-text {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.5;
+  }
+  
+  body.dark-mode .guide-text {
+    color: var(--color-dark-text-light);
+  }
+  
+  /* Animation pour les cartes de destination */
+  @keyframes destinationCardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .destination-card {
+    animation: destinationCardAppear var(--transition-normal) forwards;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .destinations-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .promo-content {
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .destinations-grid {
+      grid-template-columns: 1fr;
+    }
+  }

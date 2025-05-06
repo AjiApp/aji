@@ -1,0 +1,210 @@
+.events-page {
+    padding: var(--spacing-lg);
+    animation: fadeIn var(--transition-normal);
+  }
+  
+  .events-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .add-event-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  /* Formulaire d'ajout d'événement */
+  .event-form-container {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-xl);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height var(--transition-normal), 
+                opacity var(--transition-normal),
+                margin-bottom var(--transition-normal);
+  }
+  
+  .event-form-container.visible {
+    max-height: 1000px;
+    opacity: 1;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  body.dark-mode .event-form-container {
+    background-color: var(--color-dark-surface);
+  }
+  
+  .event-form-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text);
+  }
+  
+  body.dark-mode .event-form-title {
+    color: var(--color-dark-text);
+  }
+  
+  .event-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .event-form-full-width {
+    grid-column: span 2;
+  }
+  
+  .event-form-actions {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+  }
+  
+  /* Liste des événements */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+  }
+  
+  .event-card {
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  }
+  
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  body.dark-mode .event-card {
+    background-color: var(--color-dark-surface);
+  }
+  
+  .event-image {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+  
+  .event-card:hover .event-image img {
+    transform: scale(1.05);
+  }
+  
+  .event-date-badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background-color: var(--color-primary);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-full);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .event-content {
+    padding: var(--spacing-md);
+  }
+  
+  .event-title {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+  }
+  
+  body.dark-mode .event-title {
+    color: var(--color-dark-text);
+  }
+  
+  .event-description {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.5;
+  }
+  
+  body.dark-mode .event-description {
+    color: var(--color-dark-text-light);
+  }
+  
+  .event-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+  }
+  
+  .event-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-text-light);
+  }
+  
+  body.dark-mode .event-location {
+    color: var(--color-dark-text-light);
+  }
+  
+  .event-price {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+  
+  body.dark-mode .event-price {
+    color: var(--color-primary-light);
+  }
+  
+  /* Animation pour les cartes d'événements */
+  @keyframes eventCardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .event-card {
+    animation: eventCardAppear var(--transition-normal) forwards;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .events-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-form {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-form-full-width {
+      grid-column: span 1;
+    }
+    
+    .event-form-actions {
+      grid-column: span 1;
+    }
+  }
