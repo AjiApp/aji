@@ -1,63 +1,133 @@
-.app {
+/* Styles globaux pour l'application */
+.app-container {
+  min-height: 100vh;
+  background-color: var(--bg-light);
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(240, 240, 250, 0.8));
 }
 
+.app-container.dark {
+  background-color: var(--bg-dark);
+  background-image: linear-gradient(to bottom, rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 1));
+}
+
+/* Styles pour la sidebar fixe */
+.sidebar-container {
+  width: 256px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Styles pour la zone principale */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  transition: margin-left var(--transition-normal);
+  width: 100%;
 }
 
+.main-content.with-sidebar {
+  margin-left: 256px;
+}
+
+/* Styles pour la barre de recherche */
+.search-bar {
+  background-color: var(--bg-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 16px;
+}
+
+.app-container.dark .search-bar {
+  background-color: var(--bg-dark);
+  border-color: var(--border-dark);
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 8px 8px 40px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background-color: var(--bg-input-light);
+  color: var(--text-primary-light);
+}
+
+.app-container.dark .search-input {
+  border-color: var(--border-dark);
+  background-color: var(--bg-input-dark);
+  color: var(--text-primary-dark);
+}
+
+/* Styles pour la zone de contenu */
 .content-area {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto;
+  padding: 16px;
 }
 
-/* Écran d'accueil quand aucune page n'est sélectionnée */
-.welcome-placeholder {
+/* Message de bienvenue */
+.welcome-container {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100%;
+  justify-content: center;
+  min-height: 320px;
   text-align: center;
-  padding: var(--spacing-xl);
-  animation: fadeIn var(--transition-normal);
 }
 
-.welcome-placeholder h2 {
-  font-size: 1.75rem;
-  margin-bottom: var(--spacing-md);
-  color: var(--color-primary);
+.app-container.dark .welcome-container {
+  background-color: var(--bg-dark);
+  border-color: var(--border-dark);
 }
 
-.welcome-placeholder p {
-  font-size: 1.1rem;
-  color: var(--color-text-light);
-  max-width: 600px;
+.welcome-container h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
 }
 
-body.dark-mode .welcome-placeholder h2 {
-  color: var(--color-primary-light);
+.welcome-container p {
+  color: var(--text-secondary-light);
+  max-width: 400px;
 }
 
-body.dark-mode .welcome-placeholder p {
-  color: var(--color-dark-text-light);
+.app-container.dark .welcome-container p {
+  color: var(--text-secondary-dark);
 }
 
-/* Animation d'entrée pour les pages */
-.content-area > div {
-  animation: fadeIn var(--transition-normal);
+/* Menu mobile overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 60px; /* Hauteur du header */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+  display: flex;
+  justify-content: flex-start;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Adaptations pour mobile */
+@media (max-width: 767px) {
   .main-content {
-    margin-left: 0;
+    padding-bottom: 60px; /* Espace pour la barre de navigation mobile */
+  }
+  
+  .content-area {
+    padding: 8px;
   }
 }

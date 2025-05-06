@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
 import './Discover.css';
 
-const Discover = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  
+const DiscoverPage = () => {
   const categories = [
     { id: 'all', name: 'Tous' },
     { id: 'beaches', name: 'Plages' }, 
@@ -11,65 +8,50 @@ const Discover = () => {
     { id: 'desert', name: 'Désert' }, 
     { id: 'historical', name: 'Villes historiques' }, 
     { id: 'crafts', name: 'Artisanat' }, 
-    { id: 'food', name: 'Gastronomie' }, 
-    { id: 'architecture', name: 'Architecture' }
+    { id: 'food', name: 'Gastronomie' }
   ];
-  
+
   const destinations = [
     { 
       id: '1', 
       title: 'Désert du Sahara', 
-      image: '/api/placeholder/300/200',
-      description: 'Explorez les magnifiques dunes de sable du Sahara marocain',
+      description: 'Explorez les magnifiques dunes de sable',
       location: 'Merzouga, Maroc',
-      rating: 4.9,
-      categories: ['desert']
+      rating: 4.9
     },
     { 
       id: '2', 
       title: 'Chefchaouen', 
-      image: '/api/placeholder/300/200',
-      description: 'Découvrez la fameuse ville bleue du nord du Maroc',
+      description: 'Découvrez la fameuse ville bleue',
       location: 'Chefchaouen, Maroc',
-      rating: 4.8,
-      categories: ['historical', 'architecture']
+      rating: 4.8
     },
     { 
       id: '3', 
       title: 'Jardins Majorelle', 
-      image: '/api/placeholder/300/200',
-      description: 'Visitez ces jardins botaniques et paysagers uniques à Marrakech',
+      description: 'Visitez ces jardins botaniques uniques',
       location: 'Marrakech, Maroc',
-      rating: 4.7,
-      categories: ['architecture']
+      rating: 4.7
     },
     { 
       id: '4', 
       title: 'Médina de Fès', 
-      image: '/api/placeholder/300/200',
-      description: 'Plongez dans l\'une des plus grandes médinas piétonnes du monde',
+      description: 'Plongez dans cette médina historique',
       location: 'Fès, Maroc',
-      rating: 4.6,
-      categories: ['historical', 'crafts', 'architecture']
+      rating: 4.6
     }
   ];
-  
-  const filteredDestinations = activeCategory === 'all' 
-    ? destinations 
-    : destinations.filter(dest => dest.categories.includes(activeCategory));
 
   return (
     <div className="discover-page">
-      <h2 className="discover-title">Découvrir le Maroc</h2>
+      <h1 className="page-title">Découvrir le Maroc</h1>
       
-      {/* Catégories */}
       <div className="categories-container">
-        <div className="categories-list">
-          {categories.map(category => (
-            <button
-              key={category.id}
-              className={`category-button ${activeCategory === category.id ? 'active' : ''}`}
-              onClick={() => setActiveCategory(category.id)}
+        <div className="categories-scrollable">
+          {categories.map((category, index) => (
+            <button 
+              key={category.id} 
+              className={`category-button ${index === 0 ? 'active' : ''}`}
             >
               {category.name}
             </button>
@@ -77,35 +59,29 @@ const Discover = () => {
         </div>
       </div>
       
-      {/* Destinations populaires */}
-      <div>
+      <div className="section">
         <div className="section-header">
-          <h3 className="section-title">Destinations populaires</h3>
-          <a href="#" className="view-all-link">
-            Voir tout <span>→</span>
+          <h2 className="section-title">Destinations populaires</h2>
+          <a href="#" className="see-all-link">
+            Voir tout <span className="arrow-icon">→</span>
           </a>
         </div>
         
         <div className="destinations-grid">
-          {filteredDestinations.map((destination, index) => (
-            <div 
-              key={destination.id} 
-              className="destination-card"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
+          {destinations.map((dest) => (
+            <div key={dest.id} className="destination-card">
               <div className="destination-image">
-                <img src={destination.image} alt={destination.title} />
+                <img src="/api/placeholder/300/128" alt={dest.title} />
                 <div className="destination-rating">
-                  {destination.rating} <span>★</span>
+                  {dest.rating} ★
                 </div>
               </div>
-              
-              <div className="destination-content">
-                <h4 className="destination-title">{destination.title}</h4>
-                <p className="destination-description">{destination.description}</p>
+              <div className="destination-details">
+                <h3 className="destination-title">{dest.title}</h3>
+                <p className="destination-description">{dest.description}</p>
                 <div className="destination-location">
-                  <span>📍</span>
-                  <span>{destination.location}</span>
+                  <span className="location-icon">📍</span>
+                  <span>{dest.location}</span>
                 </div>
               </div>
             </div>
@@ -113,33 +89,20 @@ const Discover = () => {
         </div>
       </div>
       
-      {/* Bannière promotionnelle */}
-      <div className="promo-banner">
-        <div className="promo-content">
-          <div className="promo-info">
-            <h3 className="promo-title">Offre spéciale</h3>
-            <p className="promo-text">20% de réduction sur toutes les réservations d'excursions désert</p>
-            <p className="promo-date">Offre valable jusqu'au 31 mai 2025</p>
+      <div className="special-offer-banner">
+        <div className="offer-content">
+          <div>
+            <h3 className="offer-title">Offre spéciale</h3>
+            <p className="offer-description">20% de réduction sur toutes les réservations d'excursions désert</p>
+            <p className="offer-expiry">Offre valable jusqu'au 31 mai 2025</p>
           </div>
-          <button className="promo-button">
+          <button className="offer-button">
             En savoir plus
           </button>
         </div>
-      </div>
-      
-      {/* Guide interactif */}
-      <div className="guide-card">
-        <h3 className="guide-title">
-          Guide interactif
-        </h3>
-        <p className="guide-text">
-          Utilisez notre guide interactif pour planifier votre voyage au Maroc. Sélectionnez vos centres d'intérêt 
-          et nous vous proposerons un itinéraire personnalisé.
-        </p>
-        <button className="button">Commencer</button>
       </div>
     </div>
   );
 };
 
-export default Discover;
+export default DiscoverPage;

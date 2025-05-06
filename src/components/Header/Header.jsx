@@ -1,29 +1,32 @@
-import React from 'react';
+import { Menu, X, Sun, Moon, Search, Bell } from 'lucide-react';
 import './Header.css';
-import { Moon, Sun, Menu } from 'lucide-react';
 
-const Header = ({ isDarkMode, toggleTheme, toggleSidebar }) => {
+const Header = ({ isDarkMode, toggleDarkMode, toggleSearch, toggleMobileMenu, isMobile }) => {
   return (
     <header className="header">
-      <div className="header-logo">
-        <span>Super App</span>
-      </div>
+      {/* Menu mobile */}
+      {isMobile && (
+        <button className="header-icon-button" onClick={toggleMobileMenu}>
+          <Menu size={20} />
+        </button>
+      )}
       
+      {/* Logo */}
+      <div className="header-logo">Super App</div>
+      
+      {/* Actions */}
       <div className="header-actions">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={isDarkMode ? "Activer le mode clair" : "Activer le mode sombre"}
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+        <button className="header-icon-button" onClick={toggleSearch}>
+          <Search size={20} />
         </button>
         
-        <button 
-          className="mobile-menu-button" 
-          onClick={toggleSidebar}
-          aria-label="Ouvrir le menu"
-        >
-          <Menu size={24} />
+        <button className="header-icon-button notification-button">
+          <Bell size={20} />
+          <span className="notification-badge"></span>
+        </button>
+        
+        <button className="header-icon-button" onClick={toggleDarkMode}>
+          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
     </header>

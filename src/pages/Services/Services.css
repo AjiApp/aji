@@ -1,35 +1,54 @@
 .services-page {
-    padding: var(--spacing-lg);
-    animation: fadeIn var(--transition-normal);
+    padding: 16px;
   }
   
-  .services-title {
-    margin-bottom: var(--spacing-xl);
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text-primary-light);
+  }
+  
+  :root.dark .page-title {
+    color: var(--text-primary-dark);
   }
   
   .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  @media (min-width: 640px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .services-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
   
   .service-card {
-    background-color: white;
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
+    background-color: var(--bg-card-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    transition: all var(--transition-fast);
     cursor: pointer;
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  }
+  
+  :root.dark .service-card {
+    background-color: var(--bg-card-dark);
+    border-color: var(--border-dark);
   }
   
   .service-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
-  
-  body.dark-mode .service-card {
-    background-color: var(--color-dark-surface);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
   }
   
   .service-content {
@@ -38,124 +57,75 @@
     justify-content: space-between;
   }
   
-  .service-icon-name {
+  .service-info {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
   }
   
   .service-icon {
-    font-size: 1.5rem;
-    transition: transform var(--transition-fast);
-  }
-  
-  .service-card:hover .service-icon {
-    transform: scale(1.15);
+    font-size: 24px;
+    margin-right: 12px;
   }
   
   .service-name {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    transition: color var(--transition-fast);
+    font-weight: 500;
+    color: var(--text-primary-light);
   }
   
-  .service-card:hover .service-name {
-    color: var(--color-primary);
-  }
-  
-  body.dark-mode .service-name {
-    color: var(--color-dark-text);
-  }
-  
-  body.dark-mode .service-card:hover .service-name {
-    color: var(--color-primary-light);
+  :root.dark .service-name {
+    color: var(--text-primary-dark);
   }
   
   .service-arrow {
-    color: var(--color-text-light);
-    transition: transform var(--transition-fast), color var(--transition-fast);
+    color: var(--text-muted-light);
   }
   
-  .service-card:hover .service-arrow {
-    transform: translateX(4px);
-    color: var(--color-primary);
+  :root.dark .service-arrow {
+    color: var(--text-muted-dark);
   }
   
-  body.dark-mode .service-arrow {
-    color: var(--color-dark-text-light);
+  .custom-services-card {
+    background-color: var(--bg-card-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 16px;
   }
   
-  body.dark-mode .service-card:hover .service-arrow {
-    color: var(--color-primary-light);
+  :root.dark .custom-services-card {
+    background-color: var(--bg-card-dark);
+    border-color: var(--border-dark);
   }
   
-  .custom-services {
-    background-color: white;
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text-primary-light);
   }
   
-  body.dark-mode .custom-services {
-    background-color: var(--color-dark-surface);
+  :root.dark .section-title {
+    color: var(--text-primary-dark);
   }
   
-  .custom-services-title {
-    font-size: 1.25rem;
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-md);
-    color: var(--color-text);
+  .section-text {
+    margin-bottom: 16px;
+    color: var(--text-secondary-light);
+    line-height: 1.5;
   }
   
-  body.dark-mode .custom-services-title {
-    color: var(--color-dark-text);
+  :root.dark .section-text {
+    color: var(--text-secondary-dark);
   }
   
-  .custom-services-text {
-    color: var(--color-text-light);
-    margin-bottom: var(--spacing-lg);
+  .primary-button {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: background-color var(--transition-fast);
   }
   
-  body.dark-mode .custom-services-text {
-    color: var(--color-dark-text-light);
-  }
-  
-  /* Animation pour les cartes de service */
-  @keyframes serviceCardAppear {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .service-card {
-    animation: serviceCardAppear var(--transition-normal) forwards;
-  }
-  
-  /* Appliquer un délai d'animation différent pour chaque carte */
-  .service-card:nth-child(1) { animation-delay: 0.05s; }
-  .service-card:nth-child(2) { animation-delay: 0.1s; }
-  .service-card:nth-child(3) { animation-delay: 0.15s; }
-  .service-card:nth-child(4) { animation-delay: 0.2s; }
-  .service-card:nth-child(5) { animation-delay: 0.25s; }
-  .service-card:nth-child(6) { animation-delay: 0.3s; }
-  .service-card:nth-child(7) { animation-delay: 0.35s; }
-  .service-card:nth-child(8) { animation-delay: 0.4s; }
-  .service-card:nth-child(9) { animation-delay: 0.45s; }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .services-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .services-grid {
-      grid-template-columns: 1fr;
-    }
+  .primary-button:hover {
+    background-color: var(--primary-hover);
   }

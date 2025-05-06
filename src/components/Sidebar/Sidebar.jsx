@@ -1,65 +1,46 @@
-import React from 'react';
+import { X } from 'lucide-react';
 import './Sidebar.css';
-import { Home, FileText, Globe, Calendar, Compass, X } from 'lucide-react';
 
-const Sidebar = ({ active, onSelect, isOpen, toggleSidebar }) => {
+const Sidebar = ({ active, setActivePage, isMobile = false, closeMobileMenu }) => {
   const menu = [
-    { id: 'home', label: 'Accueil', icon: <Home size={20} /> },
-    { id: 'features', label: 'Fonctionnalités', icon: <FileText size={20} /> },
-    { id: 'services', label: 'Services', icon: <Globe size={20} /> },
-    { id: 'events', label: 'Événements', icon: <Calendar size={20} /> },
-    { id: 'discover', label: 'Découvrir', icon: <Compass size={20} /> },
+    { id: 'home', label: 'Accueil', icon: '🏠' },
+    { id: 'features', label: 'Fonctionnalités', icon: '📄' },
+    { id: 'services', label: 'Services', icon: '🌐' },
+    { id: 'events', label: 'Événements', icon: '📅' },
+    { id: 'discover', label: 'Découvrir', icon: '🧭' },
   ];
 
-  // Fonction pour gérer le clic sur un élément du menu
-  const handleMenuItemClick = (itemId) => {
-    // Appeler la fonction de sélection passée en props
-    onSelect(itemId);
-    
-    // Fermer la sidebar sur mobile après la sélection
-    if (window.innerWidth < 768) {
-      toggleSidebar();
-    }
-  };
-
   return (
-    <>
-      {/* Overlay pour fermer le menu sur mobile */}
-      <div 
-        className={`sidebar-overlay ${isOpen ? 'active' : ''}`} 
-        onClick={toggleSidebar}
-      ></div>
-      
-      {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-title">Super App</div>
-          <button 
-            className="mobile-menu-button" 
-            onClick={toggleSidebar}
-          >
+    <div className={`sidebar ${isMobile ? 'sidebar-mobile slide-in-left' : ''}`}>
+      <div className="sidebar-header">
+        <div className="sidebar-title">Menu</div>
+        {isMobile && (
+          <button className="sidebar-close-button" onClick={closeMobileMenu}>
             <X size={20} />
           </button>
-        </div>
-        
-        <nav className="sidebar-nav">
-          {menu.map(item => (
-            <div
-              key={item.id}
-              className={`sidebar-nav-item ${active === item.id ? 'active' : ''}`}
-              onClick={() => handleMenuItemClick(item.id)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </div>
+        )}
+      </div>
+      
+      <nav className="sidebar-nav">
+        <ul className="sidebar-menu">
+          {menu.map((item) => (
+            <li key={item.id} className="sidebar-menu-item">
+              <button
+                onClick={() => setActivePage(item.id)}
+                className={`sidebar-menu-button ${active === item.id ? 'active' : ''}`}
+              >
+                <span className="sidebar-menu-icon">{item.icon}</span>
+                <span className="sidebar-menu-label">{item.label}</span>
+              </button>
+            </li>
           ))}
-        </nav>
-        
-        <div className="sidebar-footer">
-          &copy; 2025 Super App
-        </div>
-      </aside>
-    </>
+        </ul>
+      </nav>
+      
+      <div className="sidebar-footer">
+        &copy; 2025 Super App
+      </div>
+    </div>
   );
 };
 

@@ -1,123 +1,160 @@
-import React, { useState, useEffect } from 'react';
-// Import des feuilles de style
-import './styles/global.css';
-import './App.css';
-
-// Import des composants
+import { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import Sidebar from './components/Sidebar/Sidebar';
+import MobileNavbar from './components/MobileNavbar/MobileNavbar';
+import HomePage from './pages/Home/Home';
+import FeaturesPage from './pages/Features/Features';
+import ServicesPage from './pages/Services/Services';
+import EventsPage from './pages/Events/Events';
+import DiscoverPage from './pages/Discover/Discover';
+import './App.css';
 
-// Import des pages
-import Home from './pages/Home/Home';
-import Features from './pages/Features/Features';
-import Services from './pages/Services/Services';
-import Events from './pages/Events/Events';
-import Discover from './pages/Discover/Discover';
-
-function App() {
-  const [activePage, setActivePage] = useState(null); // Initialement, aucune page n'est active
-  const [isSidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
+const App = () => {
+  // États pour gérer les différentes fonctionnalités
+  const [activePage, setActivePage] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Gestion du mode sombre
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Vérifier si l'appareil est mobile
   useEffect(() => {
-    // Vérifier si l'utilisateur a déjà des préférences
-    const savedMode = localStorage.getItem('darkMode');
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     
-    if (savedMode) {
-      setIsDarkMode(savedMode === 'true');
-    } else {
-      // Sinon, vérifier les préférences système
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(prefersDark);
-    }
+    // Vérifier au chargement
+    checkIfMobile();
+    
+    // Vérifier au redimensionnement
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
   }, []);
-
-  // Appliquer le mode sombre
+  
+  // Gestion du mode sombre
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
+      document.documentElement.classList.add('dark');
     } else {
       document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove('dark');
     }
-    
-    // Sauvegarder la préférence
-    localStorage.setItem('darkMode', isDarkMode);
   }, [isDarkMode]);
-
-  // Gérer la responsivité de la sidebar
-  useEffect(() => {
-    const handleResize = () => {
-      setSidebarOpen(window.innerWidth >= 768);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   // Basculer le mode sombre
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
-
-  // Basculer l'état de la sidebar
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
+  
+  // Basculer la recherche
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+  };
+  
+  // Basculer le menu mobile
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Sélectionner une page
-  const handlePageSelect = (pageId) => {
-    setActivePage(pageId);
+  // Fermer le menu mobile lors du changement de page
+  const handlePageChange = (page) => {
+    setActivePage(page);
+    setIsMobileMenuOpen(false);
   };
 
-  // Rendre la page active seulement si une page est sélectionnée
+  // Rendu des pages
   const renderPage = () => {
     switch (activePage) {
       case 'home':
-        return <Home />;
+        return <HomePage />;
       case 'features':
-        return <Features />;
+        return <FeaturesPage />;
       case 'services':
-        return <Services />;
+        return <ServicesPage />;
       case 'events':
-        return <Events />;
+        return <EventsPage />;
       case 'discover':
-        return <Discover />;
+        return <DiscoverPage />;
       default:
         return (
-          <div className="welcome-placeholder">
+          <div className="welcome-container">
             <h2>Bienvenue sur Super App</h2>
-            <p>Sélectionnez une option dans le menu pour commencer.</p>
+            <p>
+              Sélectionnez une option dans le menu pour commencer.
+            </p>
           </div>
         );
     }
   };
 
   return (
-    <div className="app">
-      <Sidebar 
-        active={activePage} 
-        onSelect={handlePageSelect} 
-        isOpen={isSidebarOpen} 
-        toggleSidebar={toggleSidebar} 
-      />
+    <div className={`app-container ${isDarkMode ? 'dark' : ''}`}>
+      {/* Sidebar pour desktop */}
+      {!isMobile && (
+        <div className="sidebar-container">
+          <Sidebar 
+            active={activePage}
+            setActivePage={handlePageChange}
+          />
+        </div>
+      )}
       
-      <div className="main-content">
+      {/* Zone principale */}
+      <div className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
+        {/* Header */}
         <Header 
           isDarkMode={isDarkMode}
-          toggleTheme={toggleDarkMode}
-          toggleSidebar={toggleSidebar}
+          toggleDarkMode={toggleDarkMode}
+          toggleSearch={toggleSearch}
+          toggleMobileMenu={toggleMobileMenu}
+          isMobile={isMobile}
         />
         
+        {/* Menu mobile */}
+        {isMobile && isMobileMenuOpen && (
+          <div className="mobile-menu-overlay">
+            <Sidebar 
+              active={activePage}
+              setActivePage={handlePageChange}
+              isMobile={true}
+              closeMobileMenu={() => setIsMobileMenuOpen(false)}
+            />
+          </div>
+        )}
+        
+        {/* Barre de recherche */}
+        {isSearchOpen && (
+          <div className="search-bar">
+            <div className="search-input-container">
+              <input
+                type="text"
+                placeholder="Rechercher..."
+                className="search-input"
+                autoFocus
+              />
+            </div>
+          </div>
+        )}
+        
+        {/* Zone de contenu principal */}
         <div className="content-area">
           {renderPage()}
         </div>
+        
+        {/* Navigation mobile en bas */}
+        {isMobile && (
+          <MobileNavbar 
+            active={activePage}
+            setActivePage={handlePageChange}
+          />
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default App;

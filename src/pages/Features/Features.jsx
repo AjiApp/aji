@@ -1,22 +1,6 @@
-import React, { useState } from 'react';
 import './Features.css';
 
-const Features = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Formulaire soumis:', { title, description, file });
-    // Réinitialiser le formulaire
-    setTitle('');
-    setDescription('');
-    setFile(null);
-    // Afficher un message de succès (en production, on utiliserait un système de notifications)
-    alert('Contenu ajouté avec succès !');
-  };
-
+const FeaturesPage = () => {
   const popularFeatures = [
     "Recherche avancée",
     "Notifications en temps réel",
@@ -27,61 +11,41 @@ const Features = () => {
 
   return (
     <div className="features-page">
-      <h2 className="features-title">Fonctionnalités</h2>
+      <h1 className="page-title">Fonctionnalités</h1>
       
       <div className="features-grid">
-        {/* Formulaire d'ajout de contenu */}
-        <div className="feature-form-card">
-          <h3 className="feature-card-title">Ajouter un contenu</h3>
+        <div className="add-content-card">
+          <h3 className="section-title">Ajouter un contenu</h3>
           
-          <form className="feature-form" onSubmit={handleSubmit}>
+          <form className="content-form">
             <div className="form-group">
-              <label htmlFor="title">Titre</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+              <label className="form-label">Titre</label>
+              <input type="text" className="form-input" />
             </div>
             
             <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                rows="4"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              ></textarea>
+              <label className="form-label">Description</label>
+              <textarea rows="4" className="form-textarea"></textarea>
             </div>
             
             <div className="form-group">
-              <label htmlFor="file">Image</label>
-              <input
-                id="file"
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files[0])}
-              />
+              <label className="form-label">Image</label>
+              <input type="file" className="form-file-input" />
             </div>
             
-            <button type="submit" className="button form-submit-button">
+            <button className="submit-button">
               Soumettre
-              <span>→</span>
             </button>
           </form>
         </div>
         
-        <div>
-          {/* Fonctionnalités populaires */}
+        <div className="features-column">
           <div className="popular-features-card">
-            <h3 className="feature-card-title">Fonctionnalités populaires</h3>
+            <h3 className="section-title">Fonctionnalités populaires</h3>
             
-            <ul className="feature-list">
+            <ul className="popular-features-list">
               {popularFeatures.map((feature, index) => (
-                <li key={index} className="feature-list-item">
+                <li key={index} className="popular-feature-item">
                   <span className="feature-dot"></span>
                   <span>{feature}</span>
                 </li>
@@ -89,7 +53,6 @@ const Features = () => {
             </ul>
           </div>
           
-          {/* Carte de support */}
           <div className="support-card">
             <h3 className="support-title">Besoin d'aide ?</h3>
             <p className="support-text">
@@ -105,4 +68,4 @@ const Features = () => {
   );
 };
 
-export default Features;
+export default FeaturesPage;
