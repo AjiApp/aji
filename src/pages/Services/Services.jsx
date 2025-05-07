@@ -18,6 +18,7 @@ const Services = () => {
     description: '',
     location: '',
     price: '',
+    history: '', // Ajout du champ histoire
     image: null
   });
   const [editingId, setEditingId] = useState(null);
@@ -105,7 +106,8 @@ const Services = () => {
             title: formData.title,
             description: formData.description,
             location: formData.location,
-            price: formData.price
+            price: formData.price,
+            history: formData.history // Inclure l'histoire dans la mise à jour
           },
           formData.image
         );
@@ -123,7 +125,8 @@ const Services = () => {
             title: formData.title,
             description: formData.description,
             location: formData.location,
-            price: formData.price
+            price: formData.price,
+            history: formData.history // Inclure l'histoire dans l'ajout
           },
           formData.image
         );
@@ -150,6 +153,7 @@ const Services = () => {
       description: location.description,
       location: location.location,
       price: location.price,
+      history: location.history || '', // Récupérer l'histoire si elle existe
       image: null
     });
     setPreviewUrl(location.imageUrl);
@@ -195,6 +199,7 @@ const Services = () => {
       description: '',
       location: '',
       price: '',
+      history: '', // Réinitialiser l'histoire
       image: null
     });
     setPreviewUrl(null);
@@ -277,6 +282,20 @@ const Services = () => {
                       placeholder="Description du lieu"
                       rows="4"
                       required
+                      disabled={loading}
+                    ></textarea>
+                  </div>
+                  
+                  {/* Nouveau champ pour l'histoire */}
+                  <div className="form-group">
+                    <label className="form-label">Histoire</label>
+                    <textarea
+                      name="history"
+                      value={formData.history}
+                      onChange={handleInputChange}
+                      className="form-textarea"
+                      placeholder="Histoire et contexte culturel du lieu"
+                      rows="6"
                       disabled={loading}
                     ></textarea>
                   </div>
@@ -379,6 +398,15 @@ const Services = () => {
                     <div className="location-details">
                       <h3 className="location-title">{location.title}</h3>
                       <p className="location-description">{location.description}</p>
+                      
+                      {/* Affichage de l'histoire si elle existe */}
+                      {location.history && (
+                        <div className="location-history">
+                          <h4 className="history-title">Histoire</h4>
+                          <p className="history-text">{location.history}</p>
+                        </div>
+                      )}
+                      
                       <div className="location-meta">
                         <div className="location-place">
                           <span className="meta-icon">📍</span>

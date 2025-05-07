@@ -13,10 +13,10 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Collection pour les lieux touristiques
-const locationsCollection = collection(db, 'locations');
+const localsCollection = collection(db, 'locals');
 
 // Collection pour les contenus features
-const contentsCollection = collection(db, 'contents');
+const featuresCollection = collection(db, 'features');
 
 // Ajouter un nouveau lieu
 export const addLocation = async (locationData, imageFile) => {
@@ -31,7 +31,7 @@ export const addLocation = async (locationData, imageFile) => {
     }
     
     // Ajouter le document dans Firestore avec l'URL de l'image si disponible
-    const docRef = await addDoc(locationsCollection, {
+    const docRef = await addDoc(localsCollection, {
       ...locationData,
       imageUrl: imageUrl || locationData.imageUrl || '/api/placeholder/300/200',
       createdAt: serverTimestamp()
@@ -51,7 +51,7 @@ export const addLocation = async (locationData, imageFile) => {
 // Récupérer tous les lieux
 export const getLocations = async () => {
   try {
-    const q = query(locationsCollection, orderBy('createdAt', 'desc'));
+    const q = query(localsCollection, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     
     return snapshot.docs.map(doc => ({
@@ -122,7 +122,7 @@ export const addContent = async (contentData, imageFile) => {
     }
     
     // Ajouter le document dans Firestore avec l'URL de l'image si disponible
-    const docRef = await addDoc(contentsCollection, {
+    const docRef = await addDoc(featuresCollection, {
       ...contentData,
       imageUrl: imageUrl || contentData.imageUrl || '/api/placeholder/400/200',
       createdAt: serverTimestamp()
@@ -142,7 +142,7 @@ export const addContent = async (contentData, imageFile) => {
 // Récupérer tous les contenus
 export const getContents = async () => {
   try {
-    const q = query(contentsCollection, orderBy('createdAt', 'desc'));
+    const q = query(featuresCollection, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     
     return snapshot.docs.map(doc => ({

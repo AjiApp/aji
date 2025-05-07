@@ -1,17 +1,44 @@
-import { useState } from 'react';
-import { useAppContext } from '../../context/AppContext';
+import { useState, useEffect } from 'react';
+// Importation directe du service Firebase
+import { 
+  getContents, 
+  addContent, 
+  updateContent, 
+  deleteContent 
+} from '../../firebase/firebase.service';
 import './Features.css';
 
 const FeaturesPage = () => {
-  const { contents, addContent, updateContent, deleteContent } = useAppContext();
+  // État local pour stocker les contenus
+  const [contents, setContents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
   
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     image: null
   });
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  // Charger les contenus au chargement du composant
+  useEffect(() => {
+    const loadContents = async () => {
+      try {
+        setLoading(true);
+        const contentsData = await getContents();
+        setContents(contentsData);
+      } catch (error) {
+        console.error("Erreur lors du chargement des contenus:", error);
+        showNotification('Erreur lors du chargement des contenus', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContents();
+  }, []);
 
   const popularFeatures = [
     "Advanced Search",
@@ -46,29 +73,53 @@ const FeaturesPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Create content object with unique ID
-    const contentItem = {
-      id: Date.now(),
-      title: formData.title,
-      description: formData.description,
-      imageUrl: imagePreview || '/api/placeholder/400/200',
-      createdAt: new Date().toLocaleDateString()
-    };
-    
-    if (editIndex !== null) {
-      // Update existing content
-      updateContent(editIndex, contentItem);
-      setEditIndex(null);
-    } else {
-      // Add new content
-      addContent(contentItem);
+    try {
+      setLoading(true);
+      
+      if (editId) {
+        // Mettre à jour le contenu existant
+        const updatedContent = await updateContent(
+          editId,
+          {
+            title: formData.title,
+            description: formData.description,
+          },
+          formData.image
+        );
+        
+        // Mettre à jour l'état local
+        setContents(contents.map(content => 
+          content.id === editId ? updatedContent : content
+        ));
+        
+        showNotification('Contenu mis à jour avec succès', 'success');
+      } else {
+        // Ajouter un nouveau contenu
+        const newContent = await addContent(
+          {
+            title: formData.title,
+            description: formData.description,
+          },
+          formData.image
+        );
+        
+        // Ajouter à l'état local
+        setContents([newContent, ...contents]);
+        
+        showNotification('Contenu ajouté avec succès', 'success');
+      }
+      
+      // Réinitialiser le formulaire
+      resetForm();
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement du contenu:", error);
+      showNotification("Une erreur s'est produite", 'error');
+    } finally {
+      setLoading(false);
     }
-    
-    // Reset form
-    resetForm();
   };
 
   const resetForm = () => {
@@ -78,17 +129,17 @@ const FeaturesPage = () => {
       image: null
     });
     setImagePreview(null);
+    setEditId(null);
   };
 
-  const handleEdit = (index) => {
-    const contentToEdit = contents[index];
+  const handleEdit = (content) => {
     setFormData({
-      title: contentToEdit.title,
-      description: contentToEdit.description,
+      title: content.title,
+      description: content.description,
       image: null
     });
-    setImagePreview(contentToEdit.imageUrl);
-    setEditIndex(index);
+    setImagePreview(content.imageUrl);
+    setEditId(content.id);
     
     // Scroll to form
     document.querySelector('.add-content-card').scrollIntoView({ 
@@ -97,21 +148,40 @@ const FeaturesPage = () => {
     });
   };
   
-  const handleDelete = (index) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this content?')) {
-      deleteContent(index);
-      
-      // If editing the deleted content, reset form
-      if (editIndex === index) {
-        resetForm();
-        setEditIndex(null);
+      try {
+        setLoading(true);
+        await deleteContent(id);
+        
+        // Mettre à jour l'état local
+        setContents(contents.filter(content => content.id !== id));
+        
+        // Si en train d'éditer ce contenu, réinitialiser le formulaire
+        if (editId === id) {
+          resetForm();
+        }
+        
+        showNotification('Contenu supprimé avec succès', 'success');
+      } catch (error) {
+        console.error("Erreur lors de la suppression du contenu:", error);
+        showNotification("Une erreur s'est produite lors de la suppression", 'error');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const cancelEdit = () => {
     resetForm();
-    setEditIndex(null);
+  };
+
+  const showNotification = (message, type = 'info') => {
+    setNotification({ message, type });
+    
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   };
 
   return (
@@ -121,7 +191,7 @@ const FeaturesPage = () => {
       <div className="features-grid">
         <div className="add-content-card">
           <h3 className="section-title">
-            {editIndex !== null ? 'Edit Content' : 'Add New Content'}
+            {editId ? 'Edit Content' : 'Add New Content'}
           </h3>
           
           <form className="content-form" onSubmit={handleSubmit}>
@@ -135,6 +205,7 @@ const FeaturesPage = () => {
                 className="form-input" 
                 placeholder="Enter a title..." 
                 required
+                disabled={loading}
               />
             </div>
             
@@ -148,6 +219,7 @@ const FeaturesPage = () => {
                 className="form-textarea" 
                 placeholder="Write a short description..."
                 required
+                disabled={loading}
               ></textarea>
             </div>
             
@@ -157,7 +229,8 @@ const FeaturesPage = () => {
                 type="file" 
                 accept="image/*"
                 onChange={handleImageChange}
-                className="form-file-input" 
+                className="form-file-input"
+                disabled={loading}
               />
               
               {imagePreview && (
@@ -168,22 +241,31 @@ const FeaturesPage = () => {
             </div>
             
             <div className="form-actions">
-              {editIndex !== null ? (
+              {editId ? (
                 <>
-                  <button type="submit" className="submit-button">
-                    Update
+                  <button 
+                    type="submit" 
+                    className="submit-button"
+                    disabled={loading}
+                  >
+                    {loading ? 'Updating...' : 'Update'}
                   </button>
                   <button 
                     type="button" 
                     onClick={cancelEdit}
                     className="cancel-button"
+                    disabled={loading}
                   >
                     Cancel
                   </button>
                 </>
               ) : (
-                <button type="submit" className="submit-button">
-                  Submit
+                <button 
+                  type="submit" 
+                  className="submit-button"
+                  disabled={loading}
+                >
+                  {loading ? 'Submitting...' : 'Submit'}
                 </button>
               )}
             </div>
@@ -216,12 +298,16 @@ const FeaturesPage = () => {
         </div>
       </div>
       
-      {contents.length > 0 && (
+      {loading && contents.length === 0 ? (
+        <div className="loading-container">
+          <p>Loading content...</p>
+        </div>
+      ) : contents.length > 0 ? (
         <div className="content-list-section">
-          <h2 className="content-list-title">Your Content</h2>
+          <h2 className="content-list-title">Your Features</h2>
           
           <div className="content-cards">
-            {contents.map((content, index) => (
+            {contents.map((content) => (
               <div key={content.id} className="content-card">
                 <div className="content-card-image">
                   <img src={content.imageUrl} alt={content.title} />
@@ -230,17 +316,21 @@ const FeaturesPage = () => {
                   <h3 className="content-card-title">{content.title}</h3>
                   <p className="content-card-description">{content.description}</p>
                   <div className="content-card-footer">
-                    <span className="content-card-date">{content.createdAt}</span>
+                    <span className="content-card-date">
+                      {new Date(content.createdAt).toLocaleDateString()}
+                    </span>
                     <div className="content-card-actions">
                       <button 
                         className="edit-button"
-                        onClick={() => handleEdit(index)}
+                        onClick={() => handleEdit(content)}
+                        disabled={loading}
                       >
                         Edit
                       </button>
                       <button 
                         className="delete-button"
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(content.id)}
+                        disabled={loading}
                       >
                         Delete
                       </button>
@@ -250,6 +340,16 @@ const FeaturesPage = () => {
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="empty-content-message">
+          <p>No content added yet. Use the form above to add your first content.</p>
+        </div>
+      )}
+      
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
         </div>
       )}
     </div>
