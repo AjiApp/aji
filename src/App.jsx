@@ -7,6 +7,7 @@ import FeaturesPage from './pages/Features/Features';
 import ServicesPage from './pages/Services/Services';
 import EventsPage from './pages/Events/Events';
 import DiscoverPage from './pages/Discover/Discover';
+import { AppProvider } from './context/AppContext'; // Importation du contexte
 import './App.css';
 
 const App = () => {
@@ -84,68 +85,71 @@ const App = () => {
   };
 
   return (
-    <div className={`app-container ${isDarkMode ? 'dark' : ''}`}>
-      {/* Sidebar for desktop */}
-      {!isMobile && (
-        <div className="sidebar-container">
-          <Sidebar 
-            active={activePage}
-            setActivePage={handlePageChange}
-          />
-        </div>
-      )}
-      
-      {/* Main content area */}
-      <div className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
-        {/* Top Header */}
-        <Header 
-          isDarkMode={isDarkMode}
-          toggleDarkMode={toggleDarkMode}
-          toggleSearch={toggleSearch}
-          toggleMobileMenu={toggleMobileMenu}
-          isMobile={isMobile}
-        />
-        
-        {/* Mobile Sidebar menu */}
-        {isMobile && isMobileMenuOpen && (
-          <div className="mobile-menu-overlay">
+    // Enveloppez toute l'application avec AppProvider
+    <AppProvider>
+      <div className={`app-container ${isDarkMode ? 'dark' : ''}`}>
+        {/* Sidebar for desktop */}
+        {!isMobile && (
+          <div className="sidebar-container">
             <Sidebar 
               active={activePage}
               setActivePage={handlePageChange}
-              isMobile={true}
-              closeMobileMenu={() => setIsMobileMenuOpen(false)}
             />
           </div>
         )}
         
-        {/* Search bar */}
-        {isSearchOpen && (
-          <div className="search-bar">
-            <div className="search-input-container">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="search-input"
-                autoFocus
+        {/* Main content area */}
+        <div className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
+          {/* Top Header */}
+          <Header 
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+            toggleSearch={toggleSearch}
+            toggleMobileMenu={toggleMobileMenu}
+            isMobile={isMobile}
+          />
+          
+          {/* Mobile Sidebar menu */}
+          {isMobile && isMobileMenuOpen && (
+            <div className="mobile-menu-overlay">
+              <Sidebar 
+                active={activePage}
+                setActivePage={handlePageChange}
+                isMobile={true}
+                closeMobileMenu={() => setIsMobileMenuOpen(false)}
               />
             </div>
+          )}
+          
+          {/* Search bar */}
+          {isSearchOpen && (
+            <div className="search-bar">
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="search-input"
+                  autoFocus
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* Page content */}
+          <div className="content-area">
+            {renderPage()}
           </div>
-        )}
-        
-        {/* Page content */}
-        <div className="content-area">
-          {renderPage()}
+          
+          {/* Mobile Bottom Navbar */}
+          {isMobile && (
+            <MobileNavbar 
+              active={activePage}
+              setActivePage={handlePageChange}
+            />
+          )}
         </div>
-        
-        {/* Mobile Bottom Navbar */}
-        {isMobile && (
-          <MobileNavbar 
-            active={activePage}
-            setActivePage={handlePageChange}
-          />
-        )}
       </div>
-    </div>
+    </AppProvider>
   );
 };
 
