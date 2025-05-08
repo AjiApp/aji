@@ -1,4 +1,4 @@
-// src/api/firebaseApi.js - Utilisant Firebase SDK directement
+// src/api/firebaseApi.js - Utilisant Firebase SDK directement avec corrections
 import { 
     collection, 
     addDoc, 
@@ -22,6 +22,52 @@ import {
   // Collections Firestore
   const locationsCollection = collection(db, 'locals');
   const featuresCollection = collection(db, 'features');
+  
+  // Fonction utilitaire pour déboguer les uploads
+  export const debugUploadFile = async (file) => {
+    if (!file) {
+      console.error("Aucun fichier fourni pour le débogage d'upload");
+      return null;
+    }
+  
+    console.log("------------ DÉBOGAGE UPLOAD --------------");
+    console.log("Type de fichier:", typeof file);
+    console.log("Est-ce un Blob?", file instanceof Blob);
+    console.log("Est-ce un File?", file instanceof File);
+    
+    if (file instanceof File || file instanceof Blob) {
+      console.log("Taille du fichier:", file.size, "octets");
+      console.log("Type MIME:", file.type);
+      if (file instanceof File) {
+        console.log("Nom du fichier:", file.name);
+        console.log("Dernière modification:", new Date(file.lastModified));
+      }
+    } else {
+      console.error("Le fichier n'est pas un objet Blob ou File valide");
+    }
+  
+    try {
+      // Test d'upload direct
+      const storageRef = ref(storage, `debug/${Date.now()}_test`);
+      const fileToUpload = file instanceof Blob ? file : new Blob([file], { type: 'image/jpeg' });
+      
+      console.log("Début de l'upload de test...");
+      const uploadTask = await uploadBytes(storageRef, fileToUpload);
+      console.log("Upload de test réussi:", uploadTask);
+      
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log("URL de téléchargement:", downloadURL);
+      
+      return downloadURL;
+    } catch (error) {
+      console.error("Erreur lors du test d'upload:", error);
+      console.log("Message d'erreur:", error.message);
+      console.log("Code d'erreur:", error.code);
+      return null;
+    } finally {
+      console.log("----------- FIN DÉBOGAGE UPLOAD -----------");
+    }
+  };
   
   // API pour les lieux
   export const locationsApi = {
@@ -53,62 +99,124 @@ import {
       };
     },
     
-    // Ajouter un lieu
+    // Ajouter un lieu - CORRIGÉ pour l'upload d'images
     create: async ({ locationData, imageFile }) => {
       let imageUrl = null;
       
       // Si un fichier image est fourni, on l'upload dans Firebase Storage
       if (imageFile) {
-        const storageRef = ref(storage, `locations/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          console.log("Début de l'upload d'image...", typeof imageFile, imageFile instanceof File);
+          
+          // Vérifier que c'est bien un fichier valide
+          const isValidFile = imageFile instanceof File || imageFile instanceof Blob;
+          if (!isValidFile) {
+            console.error("Type de fichier invalide pour l'upload:", typeof imageFile);
+            throw new Error("Type de fichier invalide");
+          }
+          
+          // Création d'une référence avec un nom unique pour l'image
+          const fileName = imageFile instanceof File ? imageFile.name : `image_${Date.now()}.jpg`;
+          const storageRef = ref(storage, `locations/${Date.now()}_${fileName}`);
+          
+          // Upload du fichier avec les métadonnées correctes
+          const fileType = imageFile.type || 'image/jpeg';
+          console.log("Upload avec type:", fileType);
+          
+          const uploadResult = await uploadBytes(storageRef, imageFile, {
+            contentType: fileType
+          });
+          console.log("Upload réussi:", uploadResult);
+          
+          // Obtenir l'URL de téléchargement après upload réussi
+          imageUrl = await getDownloadURL(storageRef);
+          console.log("Image uploadée avec succès, URL:", imageUrl);
+        } catch (error) {
+          console.error("Erreur lors de l'upload de l'image:", error);
+          throw error; // Propager l'erreur pour la gérer dans l'interface
+        }
       }
       
-      // Ajouter le document dans Firestore avec l'URL de l'image
-      const docRef = await addDoc(locationsCollection, {
-        ...locationData,
-        imageUrl: imageUrl || locationData.imageUrl || '/api/placeholder/300/200',
-        createdAt: serverTimestamp()
-      });
-      
-      // Récupérer le document nouvellement créé pour être cohérent avec l'API
-      const newDocSnap = await getDoc(docRef);
-      
-      return {
-        id: docRef.id,
-        ...newDocSnap.data(),
-        createdAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
-      };
+      try {
+        // Ajouter le document dans Firestore avec l'URL de l'image
+        const docRef = await addDoc(locationsCollection, {
+          ...locationData,
+          imageUrl: imageUrl || locationData.imageUrl || '/api/placeholder/300/200',
+          createdAt: serverTimestamp()
+        });
+        
+        // Récupérer le document nouvellement créé pour être cohérent avec l'API
+        const newDocSnap = await getDoc(docRef);
+        
+        return {
+          id: docRef.id,
+          ...newDocSnap.data(),
+          createdAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
+        };
+      } catch (error) {
+        console.error("Erreur lors de la création du document:", error);
+        throw error;
+      }
     },
     
-    // Mettre à jour un lieu
+    // Mettre à jour un lieu - CORRIGÉ pour l'upload d'images
     update: async ({ id, locationData, imageFile }) => {
       const locationRef = doc(db, 'locals', id);
       let imageUrl = locationData.imageUrl;
       
       // Si un nouveau fichier image est fourni, on l'upload
       if (imageFile) {
-        const storageRef = ref(storage, `locations/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          console.log("Mise à jour d'image...", typeof imageFile, imageFile instanceof File);
+          
+          // Vérifier que c'est bien un fichier valide
+          const isValidFile = imageFile instanceof File || imageFile instanceof Blob;
+          if (!isValidFile) {
+            console.error("Type de fichier invalide pour l'upload:", typeof imageFile);
+            throw new Error("Type de fichier invalide");
+          }
+          
+          // Création d'une référence avec un nom unique pour l'image
+          const fileName = imageFile instanceof File ? imageFile.name : `image_${Date.now()}.jpg`;
+          const storageRef = ref(storage, `locations/${Date.now()}_${fileName}`);
+          
+          // Upload du fichier avec les métadonnées correctes
+          const fileType = imageFile.type || 'image/jpeg';
+          
+          await uploadBytes(storageRef, imageFile, {
+            contentType: fileType
+          });
+          
+          // Obtenir l'URL de téléchargement
+          imageUrl = await getDownloadURL(storageRef);
+          console.log("Image mise à jour avec succès, URL:", imageUrl);
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour de l'image:", error);
+          throw error;
+        }
       }
       
-      const updatedData = {
-        ...locationData,
-        imageUrl,
-        updatedAt: serverTimestamp()
-      };
-      
-      await updateDoc(locationRef, updatedData);
-      
-      // Récupérer le document mis à jour
-      const updatedDocSnap = await getDoc(locationRef);
-      
-      return {
-        id,
-        ...updatedDocSnap.data(),
-        updatedAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
-      };
+      try {
+        const updatedData = {
+          ...locationData,
+          imageUrl,
+          updatedAt: serverTimestamp()
+        };
+        
+        await updateDoc(locationRef, updatedData);
+        
+        // Récupérer le document mis à jour
+        const updatedDocSnap = await getDoc(locationRef);
+        
+        return {
+          id,
+          ...updatedDocSnap.data(),
+          updatedAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
+        };
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du document:", error);
+        throw error;
+      }
     },
     
     // Supprimer un lieu
@@ -140,7 +248,7 @@ import {
     }
   };
   
-  // API pour les contenus features
+  // API pour les contenus features - AVEC MÊMES CORRECTIONS
   export const contentsApi = {
     // Récupérer tous les contenus
     getAll: async () => {
@@ -170,62 +278,122 @@ import {
       };
     },
     
-    // Ajouter un contenu
+    // Ajouter un contenu - CORRIGÉ pour l'upload d'images
     create: async ({ contentData, imageFile }) => {
       let imageUrl = null;
       
       // Si un fichier image est fourni, on l'upload dans Firebase Storage
       if (imageFile) {
-        const storageRef = ref(storage, `features/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          console.log("Début de l'upload d'image pour feature...", typeof imageFile);
+          
+          // Vérifier que c'est bien un fichier valide
+          const isValidFile = imageFile instanceof File || imageFile instanceof Blob;
+          if (!isValidFile) {
+            console.error("Type de fichier invalide pour l'upload:", typeof imageFile);
+            throw new Error("Type de fichier invalide");
+          }
+          
+          // Création d'une référence avec un nom unique pour l'image
+          const fileName = imageFile instanceof File ? imageFile.name : `image_${Date.now()}.jpg`;
+          const storageRef = ref(storage, `features/${Date.now()}_${fileName}`);
+          
+          // Upload du fichier avec les métadonnées correctes
+          const fileType = imageFile.type || 'image/jpeg';
+          
+          await uploadBytes(storageRef, imageFile, {
+            contentType: fileType
+          });
+          
+          // Obtenir l'URL de téléchargement après upload réussi
+          imageUrl = await getDownloadURL(storageRef);
+          console.log("Image uploadée avec succès, URL:", imageUrl);
+        } catch (error) {
+          console.error("Erreur lors de l'upload de l'image:", error);
+          throw error;
+        }
       }
       
-      // Ajouter le document dans Firestore avec l'URL de l'image
-      const docRef = await addDoc(featuresCollection, {
-        ...contentData,
-        imageUrl: imageUrl || contentData.imageUrl || '/api/placeholder/400/200',
-        createdAt: serverTimestamp()
-      });
-      
-      // Récupérer le document nouvellement créé
-      const newDocSnap = await getDoc(docRef);
-      
-      return {
-        id: docRef.id,
-        ...newDocSnap.data(),
-        createdAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
-      };
+      try {
+        // Ajouter le document dans Firestore avec l'URL de l'image
+        const docRef = await addDoc(featuresCollection, {
+          ...contentData,
+          imageUrl: imageUrl || contentData.imageUrl || '/api/placeholder/400/200',
+          createdAt: serverTimestamp()
+        });
+        
+        // Récupérer le document nouvellement créé
+        const newDocSnap = await getDoc(docRef);
+        
+        return {
+          id: docRef.id,
+          ...newDocSnap.data(),
+          createdAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
+        };
+      } catch (error) {
+        console.error("Erreur lors de la création du document:", error);
+        throw error;
+      }
     },
     
-    // Mettre à jour un contenu
+    // Mettre à jour un contenu - CORRIGÉ pour l'upload d'images
     update: async ({ id, contentData, imageFile }) => {
       const contentRef = doc(db, 'features', id);
       let imageUrl = contentData.imageUrl;
       
       // Si un nouveau fichier image est fourni, on l'upload
       if (imageFile) {
-        const storageRef = ref(storage, `features/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          console.log("Mise à jour d'image pour feature...", typeof imageFile);
+          
+          // Vérifier que c'est bien un fichier valide
+          const isValidFile = imageFile instanceof File || imageFile instanceof Blob;
+          if (!isValidFile) {
+            console.error("Type de fichier invalide pour l'upload:", typeof imageFile);
+            throw new Error("Type de fichier invalide");
+          }
+          
+          // Création d'une référence avec un nom unique pour l'image
+          const fileName = imageFile instanceof File ? imageFile.name : `image_${Date.now()}.jpg`;
+          const storageRef = ref(storage, `features/${Date.now()}_${fileName}`);
+          
+          // Upload du fichier avec les métadonnées correctes
+          const fileType = imageFile.type || 'image/jpeg';
+          
+          await uploadBytes(storageRef, imageFile, {
+            contentType: fileType
+          });
+          
+          // Obtenir l'URL de téléchargement
+          imageUrl = await getDownloadURL(storageRef);
+          console.log("Image mise à jour avec succès, URL:", imageUrl);
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour de l'image:", error);
+          throw error;
+        }
       }
       
-      const updatedData = {
-        ...contentData,
-        imageUrl,
-        updatedAt: serverTimestamp()
-      };
-      
-      await updateDoc(contentRef, updatedData);
-      
-      // Récupérer le document mis à jour
-      const updatedDocSnap = await getDoc(contentRef);
-      
-      return {
-        id,
-        ...updatedDocSnap.data(),
-        updatedAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
-      };
+      try {
+        const updatedData = {
+          ...contentData,
+          imageUrl,
+          updatedAt: serverTimestamp()
+        };
+        
+        await updateDoc(contentRef, updatedData);
+        
+        // Récupérer le document mis à jour
+        const updatedDocSnap = await getDoc(contentRef);
+        
+        return {
+          id,
+          ...updatedDocSnap.data(),
+          updatedAt: new Date() // serverTimestamp() ne sera pas instantanément disponible
+        };
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du document:", error);
+        throw error;
+      }
     },
     
     // Supprimer un contenu
