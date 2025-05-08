@@ -1,10 +1,10 @@
-// src/firebase/config.js - Updated configuration
+// src/firebase/config.js - Unified Firebase configuration
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Configuration Firebase
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBCQcGXm7iqF9kzjOCYIMfzzwoyRtO04jE",
   authDomain: "ajiapp-d436f.firebaseapp.com",
@@ -13,10 +13,11 @@ const firebaseConfig = {
   messagingSenderId: "486612088522",
   appId: "1:486612088522:web:485d1d949cbabc392be633"
 };
-// Initialisation de Firebase
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Exportation des services
+// Export Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);

@@ -1,81 +1,60 @@
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase/config';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
+import { useNotification } from './contexts/NotificationContext';
 import './login.css'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // Utiliser notre hook personnalisé pour l'authentification
+  const { user, loading, error, signIn, resetPassword } = useAuth();
+  
+  // Utiliser le contexte de notification pour les messages
+  const { showSuccess, showError } = useNotification();
 
-  // Check if user is already logged in
+  // Rediriger si déjà connecté
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        // If already logged in, redirect to home
-        navigate('/');
-      }
-    });
-    
-    return () => unsubscribe();
-  }, [navigate]);
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
+  // Afficher les erreurs d'authentification
+  useEffect(() => {
+    if (error) {
+      showError(error);
+    }
+  }, [error, showError]);
+
+  // Gérer la soumission du formulaire
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
     
-    try {
-      // Connexion avec email et mot de passe
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      // Redirection vers le dashboard - navigate is called automatically by the 
-      // onAuthStateChanged hook above when auth state changes
-    } catch (error) {
-      // Handle login errors with user-friendly messages
-      let errorMessage = "Une erreur s'est produite lors de la connexion.";
-      
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-email' || 
-          error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = "Email ou mot de passe incorrect.";
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = "Trop de tentatives échouées. Veuillez réessayer plus tard.";
-      } else if (error.code === 'auth/network-request-failed') {
-        errorMessage = "Problème de connexion réseau. Vérifiez votre connexion internet.";
-      }
-      
-      setError(errorMessage);
-      console.error("Erreur de connexion:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePasswordReset = async () => {
-    if (!email) {
-      setError("Veuillez saisir votre email pour réinitialiser le mot de passe.");
+    if (!email || !password) {
+      showError('Veuillez saisir votre email et votre mot de passe.');
       return;
     }
     
-    try {
-      setIsLoading(true);
-      await sendPasswordResetEmail(auth, email);
-      alert('Un email de réinitialisation a été envoyé à ' + email);
-    } catch (error) {
-      let errorMessage = "Erreur lors de l'envoi de l'email de réinitialisation.";
-      
-      if (error.code === 'auth/invalid-email') {
-        errorMessage = "Adresse email invalide.";
-      } else if (error.code === 'auth/user-not-found') {
-        errorMessage = "Aucun compte associé à cet email.";
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    const success = await signIn(email, password);
+    if (success) {
+      // La redirection se fait automatiquement grâce au useEffect qui surveille user
+    }
+  };
+
+  // Gérer la réinitialisation du mot de passe
+  const handlePasswordReset = async () => {
+    if (!email) {
+      showError("Veuillez saisir votre email pour réinitialiser le mot de passe.");
+      return;
+    }
+    
+    const success = await resetPassword(email);
+    
+    if (success) {
+      showSuccess(`Un email de réinitialisation a été envoyé à ${email}`);
     }
   };
 
@@ -83,7 +62,6 @@ const Login = () => {
     <div className="login-container">
       <form onSubmit={handleLogin} className="login-form">
         <h2>Connexion</h2>
-        {error && <div className="error-message">{error}</div>}
         
         <div className="form-group">
           <label>Email</label>
@@ -91,7 +69,7 @@ const Login = () => {
             type="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
+            disabled={loading}
             required 
           />
         </div>
@@ -102,7 +80,7 @@ const Login = () => {
             type="password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
+            disabled={loading}
             required 
           />
         </div>
@@ -110,16 +88,16 @@ const Login = () => {
         <button 
           type="submit" 
           className="login-button"
-          disabled={isLoading}
+          disabled={loading}
         >
-          {isLoading ? 'Connexion...' : 'Se connecter'}
+          {loading ? 'Connexion...' : 'Se connecter'}
         </button>
         
         <button 
           type="button" 
           onClick={handlePasswordReset}
           className="forgot-password-button"
-          disabled={isLoading}
+          disabled={loading}
         >
           Mot de passe oublié ?
         </button>

@@ -1,8 +1,8 @@
-import { Menu, Search, Bell, User, Sun, Moon, LogOut } from 'lucide-react';
 import { useState } from 'react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase/config';
+import { Menu, Search, Bell, User, Sun, Moon, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { useNotification } from '../../contexts/NotificationContext';
 import './Header.css';
 
 const Header = ({ 
@@ -10,18 +10,26 @@ const Header = ({
   toggleDarkMode, 
   toggleSearch, 
   toggleMobileMenu, 
-  isMobile,
-  user 
+  isMobile
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+  
+  // Utiliser le hook d'authentification
+  const { user, signOut } = useAuth();
+  
+  // Utiliser le contexte de notification
+  const { showSuccess, showError } = useNotification();
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      navigate('/login');
+      const success = await signOut();
+      if (success) {
+        showSuccess('Déconnexion réussie');
+        navigate('/login');
+      }
     } catch (error) {
-      console.error('Error during logout:', error);
+      showError('Erreur lors de la déconnexion');
     }
   };
 

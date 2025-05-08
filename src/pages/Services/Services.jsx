@@ -1,18 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
-  getLocations, 
-  addLocation, 
-  updateLocation, 
-  deleteLocation 
-} from '../../firebase/firebase.service';
+  useLocations, 
+  useAddLocation, 
+  useUpdateLocation, 
+  useDeleteLocation 
+} from '../../hooks/useLocations';
 import './Services.css';
 
 const Services = () => {
-  const [locations, setLocations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // États locaux
   const [showForm, setShowForm] = useState(false);
   const [notification, setNotification] = useState(null);
-  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -24,6 +22,19 @@ const Services = () => {
   const [editingId, setEditingId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
+  // Hooks React Query
+  const { 
+    data: locations = [], 
+    isLoading: isLoadingLocations,
+    isError: isErrorLocations,
+    error: locationsError
+  } = useLocations();
+  
+  const addLocation = useAddLocation();
+  const updateLocation = useUpdateLocation();
+  const deleteLocation = useDeleteLocation();
+
+  // Services disponibles
   const services = [
     { id: 'e-sim', name: 'E‑SIM', icon: '📱' },
     { id: 'visa', name: 'Visas', icon: '🛂' },
@@ -36,23 +47,7 @@ const Services = () => {
     { id: 'contacts', name: 'Important Contacts', icon: '📞' },
   ];
 
-  useEffect(() => {
-    const loadLocations = async () => {
-      try {
-        setLoading(true);
-        const locationsData = await getLocations();
-        setLocations(locationsData);
-      } catch (error) {
-        console.error("Error loading locations:", error);
-        showNotification('Error loading locations', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadLocations();
-  }, []);
-
+  // Sélection d'un service
   const handleServiceClick = (serviceId) => {
     if (serviceId === 'visit') {
       setShowForm(true);
@@ -66,6 +61,7 @@ const Services = () => {
     }
   };
 
+  // Gestion des champs de formulaire
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -74,6 +70,7 @@ const Services = () => {
     });
   };
 
+  // Gestion du changement d'image
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -89,50 +86,50 @@ const Services = () => {
     }
   };
 
+  // Soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      setLoading(true);
-      
       if (editingId) {
-        const updatedLocation = await updateLocation(
-          editingId,
-          {
+        // Mettre à jour un lieu existant
+        await updateLocation.mutateAsync({
+          id: editingId,
+          locationData: {
             title: formData.title,
             description: formData.description,
             location: formData.location,
             price: formData.price,
             history: formData.history
           },
-          formData.image
-        );
-        setLocations(locations.map(location => 
-          location.id === editingId ? updatedLocation : location
-        ));
+          imageFile: formData.image
+        });
+        
         showNotification('Location updated successfully', 'success');
       } else {
-        const newLocation = await addLocation(
-          {
+        // Ajouter un nouveau lieu
+        await addLocation.mutateAsync({
+          locationData: {
             title: formData.title,
             description: formData.description,
             location: formData.location,
             price: formData.price,
             history: formData.history
           },
-          formData.image
-        );
-        setLocations([...locations, newLocation]);
+          imageFile: formData.image
+        });
+        
         showNotification('Location added successfully', 'success');
       }
+      
       resetForm();
     } catch (error) {
       console.error("Error saving location:", error);
       showNotification("An error occurred", 'error');
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Modifier un lieu
   const handleEdit = (location) => {
     setFormData({
       title: location.title,
@@ -145,31 +142,34 @@ const Services = () => {
     setPreviewUrl(location.imageUrl);
     setEditingId(location.id);
     setShowForm(true);
+    
+    // Scroll vers le formulaire
     window.scrollTo({
       top: document.querySelector('.location-form-container').offsetTop - 20,
       behavior: 'smooth'
     });
   };
 
+  // Supprimer un lieu
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this location?')) {
       try {
-        setLoading(true);
-        await deleteLocation(id);
-        setLocations(locations.filter(location => location.id !== id));
+        await deleteLocation.mutateAsync(id);
+        
+        // Si en train d'éditer ce lieu, réinitialiser le formulaire
         if (editingId === id) {
           resetForm();
         }
+        
         showNotification('Location deleted successfully', 'success');
       } catch (error) {
         console.error("Error deleting location:", error);
         showNotification("An error occurred while deleting", 'error');
-      } finally {
-        setLoading(false);
       }
     }
   };
 
+  // Réinitialisation du formulaire
   const resetForm = () => {
     setFormData({
       title: '',
@@ -183,6 +183,7 @@ const Services = () => {
     setEditingId(null);
   };
 
+  // Afficher une notification
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => {
@@ -190,6 +191,7 @@ const Services = () => {
     }, 3000);
   };
 
+  // Formater une date
   const formatDate = (date) => {
     if (!date) return '';
     return new Date(date).toLocaleDateString('en-GB', {
@@ -198,6 +200,18 @@ const Services = () => {
       year: 'numeric'
     });
   };
+
+  // Si une erreur se produit lors du chargement
+  if (isErrorLocations) {
+    return (
+      <div className="page-container services-page">
+        <h1 className="page-title">Services</h1>
+        <div className="error-message">
+          Une erreur s'est produite: {locationsError.message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container services-page">
@@ -241,7 +255,7 @@ const Services = () => {
                       className="form-input"
                       placeholder="Place name"
                       required
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     />
                   </div>
                   
@@ -255,7 +269,7 @@ const Services = () => {
                       placeholder="Place description"
                       rows="4"
                       required
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     ></textarea>
                   </div>
                   
@@ -268,7 +282,7 @@ const Services = () => {
                       className="form-textarea"
                       placeholder="Historical and cultural context"
                       rows="6"
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     ></textarea>
                   </div>
                 </div>
@@ -284,7 +298,7 @@ const Services = () => {
                       className="form-input"
                       placeholder="City, region"
                       required
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     />
                   </div>
                   
@@ -298,7 +312,7 @@ const Services = () => {
                       className="form-input"
                       placeholder="Ex: 100 MAD or Free"
                       required
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     />
                   </div>
                   
@@ -309,7 +323,7 @@ const Services = () => {
                       accept="image/*"
                       onChange={handleImageChange}
                       className="form-file-input"
-                      disabled={loading}
+                      disabled={addLocation.isPending || updateLocation.isPending}
                     />
                     
                     {previewUrl && (
@@ -327,15 +341,15 @@ const Services = () => {
                     <button 
                       type="submit" 
                       className="submit-button"
-                      disabled={loading}
+                      disabled={updateLocation.isPending}
                     >
-                      {loading ? 'Updating...' : 'Update'}
+                      {updateLocation.isPending ? 'Updating...' : 'Update'}
                     </button>
                     <button 
                       type="button" 
                       className="cancel-button" 
                       onClick={resetForm}
-                      disabled={loading}
+                      disabled={updateLocation.isPending}
                     >
                       Cancel
                     </button>
@@ -344,16 +358,16 @@ const Services = () => {
                   <button 
                     type="submit" 
                     className="submit-button"
-                    disabled={loading}
+                    disabled={addLocation.isPending}
                   >
-                    {loading ? 'Adding...' : 'Add'}
+                    {addLocation.isPending ? 'Adding...' : 'Add'}
                   </button>
                 )}
               </div>
             </form>
           </div>
 
-          {loading && locations.length === 0 ? (
+          {isLoadingLocations ? (
             <div className="loading-container">
               <p>Loading locations...</p>
             </div>
@@ -395,14 +409,14 @@ const Services = () => {
                         <button 
                           className="edit-button"
                           onClick={() => handleEdit(location)}
-                          disabled={loading}
+                          disabled={updateLocation.isPending || deleteLocation.isPending}
                         >
                           Edit
                         </button>
                         <button 
                           className="delete-button"
                           onClick={() => handleDelete(location.id)}
-                          disabled={loading}
+                          disabled={deleteLocation.isPending}
                         >
                           Delete
                         </button>
