@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { 
-  useLocations, 
-  useAddLocation, 
-  useUpdateLocation, 
-  useDeleteLocation 
-} from '../../hooks/useLocations';
+  // Importer les nouveaux APIs
+  locationsApi, 
+  accommodationsApi, 
+  stadiumsApi
+} from '../../api';
 import './Services.css';
 
 const Services = () => {
   // États locaux
-  const [showForm, setShowForm] = useState(false);
+  const [activeService, setActiveService] = useState(null);
   const [notification, setNotification] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -21,18 +21,13 @@ const Services = () => {
   });
   const [editingId, setEditingId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
-  // Hooks React Query
-  const { 
-    data: locations = [], 
-    isLoading: isLoadingLocations,
-    isError: isErrorLocations,
-    error: locationsError
-  } = useLocations();
   
-  const addLocation = useAddLocation();
-  const updateLocation = useUpdateLocation();
-  const deleteLocation = useDeleteLocation();
+  // États pour les données et le chargement
+  const [serviceData, setServiceData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState(null);
+  const [isMutating, setIsMutating] = useState(false);
 
   // Services disponibles
   const services = [
@@ -40,17 +35,65 @@ const Services = () => {
     { id: 'visa', name: 'Visas', icon: '🛂' },
     { id: 'tickets', name: 'Tickets', icon: '🎫' },
     { id: 'flights', name: 'Flights', icon: '✈️' },
-    { id: 'accommodation', name: 'Accommodation', icon: '🏨' },
+    { id: 'accommodation', name: 'Accommodation', icon: '🏨', hasForm: true },
     { id: 'transport', name: 'Transport', icon: '🚗' },
-    { id: 'visit', name: 'Visit Morocco', icon: '🏝️' },
+    { id: 'visit', name: 'Visit Morocco', icon: '🏝️', hasForm: true },
     { id: 'food', name: 'Gastronomy', icon: '🍽️' },
     { id: 'contacts', name: 'Important Contacts', icon: '📞' },
+    { id: 'stadiums', name: 'Stadiums', icon: '🏟️', hasForm: true }
   ];
 
+  // Obtenir l'API correspondant à la catégorie active
+  const getActiveApi = () => {
+    switch(activeService) {
+      case 'accommodation':
+        return accommodationsApi;
+      case 'stadiums':
+        return stadiumsApi;
+      case 'visit':
+      default:
+        return locationsApi;
+    }
+  };
+
   // Sélection d'un service
-  const handleServiceClick = (serviceId) => {
-    if (serviceId === 'visit') {
-      setShowForm(true);
+  const handleServiceClick = async (serviceId) => {
+    const service = services.find(s => s.id === serviceId);
+    
+    if (service?.hasForm) {
+      setActiveService(serviceId);
+      resetForm();
+      
+      // Charger les données correspondantes
+      setIsLoading(true);
+      setIsError(false);
+      
+      try {
+        let api;
+        switch(serviceId) {
+          case 'accommodation':
+            api = accommodationsApi;
+            break;
+          case 'stadiums':
+            api = stadiumsApi;
+            break;
+          case 'visit':
+          default:
+            api = locationsApi;
+            break;
+        }
+        
+        const data = await api.getAll();
+        setServiceData(data);
+      } catch (err) {
+        console.error(`Erreur lors du chargement des données ${serviceId}:`, err);
+        setIsError(true);
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+      
+      // Scroll to form section
       window.scrollTo({
         top: document.documentElement.scrollHeight,
         behavior: 'smooth'
@@ -90,58 +133,60 @@ const Services = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Obtenir l'API active
+    const api = getActiveApi();
+    setIsMutating(true);
+    
     try {
       if (editingId) {
-        // Mettre à jour un lieu existant
-        await updateLocation.mutateAsync({
-          id: editingId,
-          locationData: {
-            title: formData.title,
-            description: formData.description,
-            location: formData.location,
-            price: formData.price,
-            history: formData.history
-          },
-          imageFile: formData.image
-        });
+        // Mettre à jour un élément existant
+        const dataParam = activeService === 'accommodation' 
+          ? { accommodationData: formData, id: editingId, imageFile: formData.image }
+          : activeService === 'stadiums'
+            ? { stadiumData: formData, id: editingId, imageFile: formData.image }
+            : { locationData: formData, id: editingId, imageFile: formData.image };
         
-        showNotification('Location updated successfully', 'success');
+        await api.update(dataParam);
+        
+        showNotification(`${getFormTitle()} updated successfully`, 'success');
       } else {
-        // Ajouter un nouveau lieu
-        await addLocation.mutateAsync({
-          locationData: {
-            title: formData.title,
-            description: formData.description,
-            location: formData.location,
-            price: formData.price,
-            history: formData.history
-          },
-          imageFile: formData.image
-        });
+        // Ajouter un nouvel élément
+        const dataParam = activeService === 'accommodation' 
+          ? { accommodationData: formData, imageFile: formData.image }
+          : activeService === 'stadiums'
+            ? { stadiumData: formData, imageFile: formData.image }
+            : { locationData: formData, imageFile: formData.image };
         
-        showNotification('Location added successfully', 'success');
+        await api.create(dataParam);
+        
+        showNotification(`${getFormTitle()} added successfully`, 'success');
       }
+      
+      // Recharger les données
+      const data = await api.getAll();
+      setServiceData(data);
       
       resetForm();
     } catch (error) {
-      console.error("Error saving location:", error);
+      console.error("Error saving data:", error);
       showNotification("An error occurred", 'error');
+    } finally {
+      setIsMutating(false);
     }
   };
 
-  // Modifier un lieu
-  const handleEdit = (location) => {
+  // Modifier un élément
+  const handleEdit = (item) => {
     setFormData({
-      title: location.title,
-      description: location.description,
-      location: location.location,
-      price: location.price,
-      history: location.history || '',
+      title: item.title,
+      description: item.description,
+      location: item.location,
+      price: item.price,
+      history: item.history || '',
       image: null
     });
-    setPreviewUrl(location.imageUrl);
-    setEditingId(location.id);
-    setShowForm(true);
+    setPreviewUrl(item.imageUrl);
+    setEditingId(item.id);
     
     // Scroll vers le formulaire
     window.scrollTo({
@@ -150,21 +195,30 @@ const Services = () => {
     });
   };
 
-  // Supprimer un lieu
+  // Supprimer un élément
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this location?')) {
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      setIsMutating(true);
+      
       try {
-        await deleteLocation.mutateAsync(id);
+        const api = getActiveApi();
+        await api.delete(id);
         
-        // Si en train d'éditer ce lieu, réinitialiser le formulaire
+        // Recharger les données
+        const data = await api.getAll();
+        setServiceData(data);
+        
+        // Si en train d'éditer cet élément, réinitialiser le formulaire
         if (editingId === id) {
           resetForm();
         }
         
-        showNotification('Location deleted successfully', 'success');
+        showNotification(`${getFormTitle()} deleted successfully`, 'success');
       } catch (error) {
-        console.error("Error deleting location:", error);
+        console.error("Error deleting item:", error);
         showNotification("An error occurred while deleting", 'error');
+      } finally {
+        setIsMutating(false);
       }
     }
   };
@@ -181,6 +235,20 @@ const Services = () => {
     });
     setPreviewUrl(null);
     setEditingId(null);
+  };
+
+  // Titre du formulaire selon le service sélectionné
+  const getFormTitle = () => {
+    switch(activeService) {
+      case 'accommodation':
+        return 'Accommodation';
+      case 'visit':
+        return 'Place to Visit';
+      case 'stadiums':
+        return 'Stadium';
+      default:
+        return 'Item';
+    }
   };
 
   // Afficher une notification
@@ -202,12 +270,12 @@ const Services = () => {
   };
 
   // Si une erreur se produit lors du chargement
-  if (isErrorLocations) {
+  if (isError && activeService) {
     return (
       <div className="page-container services-page">
         <h1 className="page-title">Services</h1>
         <div className="error-message">
-          Une erreur s'est produite: {locationsError.message}
+          Une erreur s'est produite: {error?.message || 'Unknown error'}
         </div>
       </div>
     );
@@ -221,7 +289,7 @@ const Services = () => {
         {services.map((service) => (
           <div 
             key={service.id} 
-            className="service-card"
+            className={`service-card ${activeService === service.id ? 'active' : ''}`}
             onClick={() => handleServiceClick(service.id)}
           >
             <div className="service-content">
@@ -235,11 +303,11 @@ const Services = () => {
         ))}
       </div>
 
-      {showForm && (
+      {activeService && (
         <div className="section-container">
           <div className="location-form-container">
             <h2 className="section-title">
-              {editingId ? 'Edit a Location' : 'Add a New Place to Visit'}
+              {editingId ? `Edit ${getFormTitle()}` : `Add New ${getFormTitle()}`}
             </h2>
             
             <form onSubmit={handleSubmit} className="location-form">
@@ -253,9 +321,9 @@ const Services = () => {
                       value={formData.title}
                       onChange={handleInputChange}
                       className="form-input"
-                      placeholder="Place name"
+                      placeholder={`${getFormTitle()} name`}
                       required
-                      disabled={addLocation.isPending || updateLocation.isPending}
+                      disabled={isMutating}
                     />
                   </div>
                   
@@ -266,25 +334,27 @@ const Services = () => {
                       value={formData.description}
                       onChange={handleInputChange}
                       className="form-textarea"
-                      placeholder="Place description"
+                      placeholder={`${getFormTitle()} description`}
                       rows="4"
                       required
-                      disabled={addLocation.isPending || updateLocation.isPending}
+                      disabled={isMutating}
                     ></textarea>
                   </div>
                   
-                  <div className="form-group">
-                    <label className="form-label">History</label>
-                    <textarea
-                      name="history"
-                      value={formData.history}
-                      onChange={handleInputChange}
-                      className="form-textarea"
-                      placeholder="Historical and cultural context"
-                      rows="6"
-                      disabled={addLocation.isPending || updateLocation.isPending}
-                    ></textarea>
-                  </div>
+                  {activeService === 'visit' && (
+                    <div className="form-group">
+                      <label className="form-label">History</label>
+                      <textarea
+                        name="history"
+                        value={formData.history}
+                        onChange={handleInputChange}
+                        className="form-textarea"
+                        placeholder="Historical and cultural context"
+                        rows="6"
+                        disabled={isMutating}
+                      ></textarea>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="form-right">
@@ -298,7 +368,7 @@ const Services = () => {
                       className="form-input"
                       placeholder="City, region"
                       required
-                      disabled={addLocation.isPending || updateLocation.isPending}
+                      disabled={isMutating}
                     />
                   </div>
                   
@@ -311,8 +381,8 @@ const Services = () => {
                       onChange={handleInputChange}
                       className="form-input"
                       placeholder="Ex: 100 MAD or Free"
-                      required
-                      disabled={addLocation.isPending || updateLocation.isPending}
+                   
+                      disabled={isMutating}
                     />
                   </div>
                   
@@ -323,7 +393,7 @@ const Services = () => {
                       accept="image/*"
                       onChange={handleImageChange}
                       className="form-file-input"
-                      disabled={addLocation.isPending || updateLocation.isPending}
+                      disabled={isMutating}
                     />
                     
                     {previewUrl && (
@@ -341,15 +411,15 @@ const Services = () => {
                     <button 
                       type="submit" 
                       className="submit-button"
-                      disabled={updateLocation.isPending}
+                      disabled={isMutating}
                     >
-                      {updateLocation.isPending ? 'Updating...' : 'Update'}
+                      {isMutating ? 'Updating...' : 'Update'}
                     </button>
                     <button 
                       type="button" 
                       className="cancel-button" 
                       onClick={resetForm}
-                      disabled={updateLocation.isPending}
+                      disabled={isMutating}
                     >
                       Cancel
                     </button>
@@ -358,65 +428,69 @@ const Services = () => {
                   <button 
                     type="submit" 
                     className="submit-button"
-                    disabled={addLocation.isPending}
+                    disabled={isMutating}
                   >
-                    {addLocation.isPending ? 'Adding...' : 'Add'}
+                    {isMutating ? 'Adding...' : 'Add'}
                   </button>
                 )}
               </div>
             </form>
           </div>
 
-          {isLoadingLocations ? (
+          {isLoading ? (
             <div className="loading-container">
-              <p>Loading locations...</p>
+              <p>Loading {getFormTitle().toLowerCase()}...</p>
             </div>
-          ) : locations.length > 0 ? (
+          ) : serviceData.length > 0 ? (
             <div className="locations-container">
-              <h2 className="section-title">Places to Visit in Morocco</h2>
+              <h2 className="section-title">
+                {activeService === 'accommodation' && 'Accommodations in Morocco'}
+                {activeService === 'visit' && 'Places to Visit in Morocco'}
+                {activeService === 'stadiums' && 'Stadiums in Morocco'}
+              </h2>
               
               <div className="locations-grid">
-                {locations.map((location) => (
-                  <div key={location.id} className="location-card">
+                {serviceData.map((item) => (
+                  <div key={item.id} className="location-card">
                     <div className="location-image">
-                      <img src={location.imageUrl} alt={location.title} />
+                      <img src={item.imageUrl} alt={item.title} />
                     </div>
                     <div className="location-details">
-                      <h3 className="location-title">{location.title}</h3>
-                      <p className="location-description">{location.description}</p>
+                      <h3 className="location-title">{item.title}</h3>
+                      <p className="location-description">{item.description}</p>
                       
-                      {location.history && (
+                      {item.history && (
                         <div className="location-history">
                           <h4 className="history-title">History</h4>
-                          <p className="history-text">{location.history}</p>
+                          <p className="history-text">{item.history}</p>
                         </div>
                       )}
                       
                       <div className="location-meta">
                         <div className="location-place">
                           <span className="meta-icon">📍</span>
-                          <span>{location.location}</span>
+                          <span>{item.location}</span>
                         </div>
                         <div className="location-price">
                           <span className="meta-icon">💰</span>
-                          <span>{location.price}</span>
+                          <span>{item.price}</span>
                         </div>
                       </div>
                       <div className="location-date">
-                        Added on {formatDate(location.createdAt)}
+                        Added on {formatDate(item.createdAt)}
                       </div>
                       <div className="location-actions">
                         <button 
                           className="edit-button"
-                          onClick={() => handleEdit(location)}
-                          disabled={updateLocation.isPending || deleteLocation.isPending}
+                          onClick={() => handleEdit(item)}
+                          disabled={isMutating}
                         >
                           Edit
                         </button>
                         <button 
                           className="delete-button"
-                          onClick={() => handleDelete(location.id)}
-                          disabled={deleteLocation.isPending}
+                          onClick={() => handleDelete(item.id)}
+                          disabled={isMutating}
                         >
                           Delete
                         </button>
@@ -428,7 +502,7 @@ const Services = () => {
             </div>
           ) : (
             <div className="empty-locations-message">
-              <p>No places have been added yet. Use the form above to add your first place to visit.</p>
+              <p>No {getFormTitle().toLowerCase()} has been added yet. Use the form above to add your first item.</p>
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-/* Base styles from original Services.css */
+/* Base styles pour la page Services */
 .services-page {
   padding: 24px;
   background-color: #f8fafc;
@@ -19,6 +19,7 @@
   color: #f9fafb;
 }
 
+/* Grille des services */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -45,6 +46,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 :root.dark .service-card {
@@ -59,6 +62,23 @@
 
 :root.dark .service-card:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+}
+
+/* Indicateur d'élément actif */
+.service-card.active {
+  border: 2px solid #3b82f6;
+}
+
+.service-card.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 24px 24px 0;
+  border-color: transparent #3b82f6 transparent transparent;
 }
 
 .service-content {
@@ -90,13 +110,19 @@
 .service-arrow {
   color: #9ca3af;
   font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-arrow {
+  transform: translateX(3px);
+  color: #3b82f6;
 }
 
 :root.dark .service-arrow {
   color: #6b7280;
 }
 
-/* New styles for form and location listings */
+/* Styles pour le conteneur de section et le titre */
 .section-container {
   margin-top: 48px;
   animation: fadeIn 0.5s ease-in-out;
@@ -120,7 +146,7 @@
   color: #f9fafb;
 }
 
-/* Form Styles */
+/* Styles communs pour le formulaire */
 .location-form-container {
   background-color: white;
   border-radius: 12px;
@@ -228,6 +254,7 @@
   border-radius: 6px;
   font-weight: 500;
   transition: background-color 0.2s;
+  border: none;
 }
 
 .submit-button:hover {
@@ -241,13 +268,14 @@
   border-radius: 6px;
   font-weight: 500;
   transition: background-color 0.2s;
+  border: none;
 }
 
 .cancel-button:hover {
   background-color: #6b7280;
 }
 
-/* Locations Grid */
+/* Conteneur des lieux et cartes */
 .locations-container {
   margin-top: 40px;
 }
@@ -278,6 +306,7 @@
   transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .location-card:hover {
@@ -340,6 +369,56 @@
   color: #d1d5db;
 }
 
+/* Styles pour la section Histoire */
+.location-history {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+:root.dark .location-history {
+  border-color: #4b5563;
+}
+
+.history-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+:root.dark .history-title {
+  color: #f9fafb;
+}
+
+.history-text {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+
+:root.dark .history-text {
+  color: #d1d5db;
+}
+
+.history-text:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
+
+:root.dark .history-text:after {
+  background: linear-gradient(to bottom, rgba(31, 41, 55, 0), rgba(31, 41, 55, 1));
+}
+
 .location-meta {
   display: flex;
   justify-content: space-between;
@@ -363,10 +442,20 @@
   margin-right: 6px;
 }
 
+.location-date {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+:root.dark .location-date {
+  color: #9ca3af;
+}
+
 .location-actions {
   display: flex;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: auto;
 }
 
 .edit-button,
@@ -376,6 +465,8 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
 .edit-button {
@@ -394,4 +485,91 @@
 
 .delete-button:hover {
   background-color: #dc2626;
+}
+
+/* Message vide et chargement */
+.empty-locations-message,
+.loading-container {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: white;
+  border-radius: 12px;
+  color: #6b7280;
+  font-size: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+:root.dark .empty-locations-message,
+:root.dark .loading-container {
+  background-color: #1f2937;
+  color: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.notification.success {
+  background-color: #10b981;
+}
+
+.notification.error {
+  background-color: #ef4444;
+}
+
+.notification.info {
+  background-color: #3b82f6;
+}
+
+/* Animation pour le chargement */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading-container:after {
+  content: "⏳";
+  display: inline-block;
+  margin-left: 10px;
+  animation: pulse 1.5s infinite;
+}
+
+/* Responsive design supplémentaire */
+@media (max-width: 640px) {
+  .services-page {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 22px;
+  }
+  
+  .location-form-container {
+    padding: 16px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .submit-button, .cancel-button {
+    width: 100%;
+  }
 }

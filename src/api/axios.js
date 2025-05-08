@@ -72,4 +72,40 @@ export const uploadFile = async (file, path) => {
   });
 };
 
+// Fonction utilitaire pour créer une API CRUD standard
+const createCrudApi = (resourcePath) => ({
+  getAll: () => api.get(`/${resourcePath}`),
+  getById: (id) => api.get(`/${resourcePath}/${id}`),
+  create: (data) => api.post(`/${resourcePath}`, data),
+  update: (id, data) => api.put(`/${resourcePath}/${id}`, data),
+  delete: (id) => api.delete(`/${resourcePath}/${id}`)
+});
+
+// API pour les lieux à visiter (Visit Morocco)
+export const locationsAPI = createCrudApi('locals');
+
+// API pour les fonctionnalités
+export const featuresAPI = createCrudApi('features');
+
+// API pour les hébergements (Accommodations)
+export const accommodationsAPI = createCrudApi('accommodations');
+
+// API pour les stades (Stadiums)
+export const stadiumsAPI = createCrudApi('stadiums');
+
+// API pour l'upload de fichiers
+export const uploadsAPI = {
+  uploadFile: (file, path) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('path', path);
+    
+    return api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
+  }
+};
+
 export default api;
