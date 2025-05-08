@@ -24,6 +24,7 @@ const FeaturesPage = () => {
 
   // Charger les contenus au chargement du composant
   useEffect(() => {
+    
     const loadContents = async () => {
       try {
         setLoading(true);

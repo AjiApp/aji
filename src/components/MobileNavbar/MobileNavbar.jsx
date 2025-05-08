@@ -1,13 +1,21 @@
+import { useNavigate } from 'react-router-dom';
 import './MobileNavbar.css';
 
 const MobileNavbar = ({ active, setActivePage }) => {
+  const navigate = useNavigate();
+  
   const navItems = [
-    { id: 'home', label: 'Accueil', icon: '🏠' },
-    { id: 'services', label: 'Services', icon: '🌐' },
-    { id: 'events', label: 'Événements', icon: '📅' },
-    { id: 'discover', label: 'Découvrir', icon: '🧭' },
-    { id: 'features', label: 'Fonctions', icon: '📄' },
+    { id: 'home', label: 'Accueil', icon: '🏠', path: '/home' },
+    { id: 'services', label: 'Services', icon: '🌐', path: '/services' },
+    { id: 'events', label: 'Événements', icon: '📅', path: '/events' },
+    { id: 'discover', label: 'Découvrir', icon: '🧭', path: '/discover' },
+    { id: 'features', label: 'Fonctions', icon: '📄', path: '/features' },
   ];
+
+  const handleNavigation = (item) => {
+    setActivePage(item.id);
+    navigate(item.path);
+  };
 
   return (
     <nav className="mobile-navbar">
@@ -16,7 +24,7 @@ const MobileNavbar = ({ active, setActivePage }) => {
           <button
             key={item.id}
             className={`mobile-navbar-item ${active === item.id ? 'active' : ''}`}
-            onClick={() => setActivePage(item.id)}
+            onClick={() => handleNavigation(item)}
           >
             <span className="mobile-navbar-icon">{item.icon}</span>
             <span className="mobile-navbar-label">{item.label}</span>

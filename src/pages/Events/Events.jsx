@@ -4,28 +4,28 @@ const EventsPage = () => {
   const events = [
     {
       id: '1',
-      title: 'Festival de Fès',
-      description: 'Festival international de musique sacrée avec des artistes du monde entier',
-      date: '12 juin 2025',
-      location: 'Fès, Maroc',
+      title: 'Fes Festival',
+      description: 'International sacred music festival featuring artists from around the world',
+      date: 'June 12, 2025',
+      location: 'Fes, Morocco',
       price: '200 MAD'
     },
     {
       id: '2',
-      title: 'Exposition d\'art contemporain',
-      description: 'Découvrez les œuvres d\'artistes marocains émergents',
-      date: '20 mai 2025',
-      location: 'Rabat, Maroc',
-      price: 'Entrée libre'
+      title: 'Contemporary Art Exhibition',
+      description: 'Discover works by emerging Moroccan artists',
+      date: 'May 20, 2025',
+      location: 'Rabat, Morocco',
+      price: 'Free entry'
     }
   ];
 
   return (
     <div className="events-page">
       <div className="events-header">
-        <h1 className="page-title">Événements</h1>
+        <h1 className="page-title">Events</h1>
         <button className="primary-button">
-          Ajouter un événement
+          Add an Event
         </button>
       </div>
       

@@ -18,7 +18,7 @@ const Services = () => {
     description: '',
     location: '',
     price: '',
-    history: '', // Ajout du champ histoire
+    history: '',
     image: null
   });
   const [editingId, setEditingId] = useState(null);
@@ -27,16 +27,15 @@ const Services = () => {
   const services = [
     { id: 'e-sim', name: 'E‑SIM', icon: '📱' },
     { id: 'visa', name: 'Visas', icon: '🛂' },
-    { id: 'tickets', name: 'Billets', icon: '🎫' },
-    { id: 'flights', name: 'Vols', icon: '✈️' },
-    { id: 'accommodation', name: 'Hébergement', icon: '🏨' },
+    { id: 'tickets', name: 'Tickets', icon: '🎫' },
+    { id: 'flights', name: 'Flights', icon: '✈️' },
+    { id: 'accommodation', name: 'Accommodation', icon: '🏨' },
     { id: 'transport', name: 'Transport', icon: '🚗' },
-    { id: 'visit', name: 'Visiter le Maroc', icon: '🏝️' },
-    { id: 'food', name: 'Gastronomie', icon: '🍽️' },
-    { id: 'contacts', name: 'Contacts importants', icon: '📞' },
+    { id: 'visit', name: 'Visit Morocco', icon: '🏝️' },
+    { id: 'food', name: 'Gastronomy', icon: '🍽️' },
+    { id: 'contacts', name: 'Important Contacts', icon: '📞' },
   ];
 
-  // Charger les lieux depuis Firebase au chargement du composant
   useEffect(() => {
     const loadLocations = async () => {
       try {
@@ -44,8 +43,8 @@ const Services = () => {
         const locationsData = await getLocations();
         setLocations(locationsData);
       } catch (error) {
-        console.error("Erreur lors du chargement des lieux:", error);
-        showNotification('Erreur lors du chargement des lieux', 'error');
+        console.error("Error loading locations:", error);
+        showNotification('Error loading locations', 'error');
       } finally {
         setLoading(false);
       }
@@ -63,7 +62,7 @@ const Services = () => {
       });
     } else {
       console.log(`Service clicked: ${serviceId}`);
-      alert(`Vous avez sélectionné le service: ${serviceId}`);
+      alert(`You selected the service: ${serviceId}`);
     }
   };
 
@@ -82,8 +81,6 @@ const Services = () => {
         ...formData,
         image: file
       });
-      
-      // Créer une prévisualisation de l'image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -94,12 +91,10 @@ const Services = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setLoading(true);
       
       if (editingId) {
-        // Mise à jour d'un lieu existant
         const updatedLocation = await updateLocation(
           editingId,
           {
@@ -107,41 +102,32 @@ const Services = () => {
             description: formData.description,
             location: formData.location,
             price: formData.price,
-            history: formData.history // Inclure l'histoire dans la mise à jour
+            history: formData.history
           },
           formData.image
         );
-        
-        // Mettre à jour le state local
         setLocations(locations.map(location => 
           location.id === editingId ? updatedLocation : location
         ));
-        
-        showNotification('Lieu mis à jour avec succès', 'success');
+        showNotification('Location updated successfully', 'success');
       } else {
-        // Ajout d'un nouveau lieu
         const newLocation = await addLocation(
           {
             title: formData.title,
             description: formData.description,
             location: formData.location,
             price: formData.price,
-            history: formData.history // Inclure l'histoire dans l'ajout
+            history: formData.history
           },
           formData.image
         );
-        
-        // Ajouter au state local
         setLocations([...locations, newLocation]);
-        
-        showNotification('Lieu ajouté avec succès', 'success');
+        showNotification('Location added successfully', 'success');
       }
-      
-      // Réinitialiser le formulaire
       resetForm();
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement du lieu:", error);
-      showNotification("Une erreur s'est produite", 'error');
+      console.error("Error saving location:", error);
+      showNotification("An error occurred", 'error');
     } finally {
       setLoading(false);
     }
@@ -153,16 +139,12 @@ const Services = () => {
       description: location.description,
       location: location.location,
       price: location.price,
-      history: location.history || '', // Récupérer l'histoire si elle existe
+      history: location.history || '',
       image: null
     });
     setPreviewUrl(location.imageUrl);
     setEditingId(location.id);
-    
-    // S'assurer que le formulaire est visible
     setShowForm(true);
-    
-    // Défilement vers le formulaire
     window.scrollTo({
       top: document.querySelector('.location-form-container').offsetTop - 20,
       behavior: 'smooth'
@@ -170,23 +152,18 @@ const Services = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?')) {
+    if (window.confirm('Are you sure you want to delete this location?')) {
       try {
         setLoading(true);
         await deleteLocation(id);
-        
-        // Mettre à jour le state local
         setLocations(locations.filter(location => location.id !== id));
-        
-        // Si en train d'éditer ce lieu, réinitialiser le formulaire
         if (editingId === id) {
           resetForm();
         }
-        
-        showNotification('Lieu supprimé avec succès', 'success');
+        showNotification('Location deleted successfully', 'success');
       } catch (error) {
-        console.error("Erreur lors de la suppression du lieu:", error);
-        showNotification("Une erreur s'est produite lors de la suppression", 'error');
+        console.error("Error deleting location:", error);
+        showNotification("An error occurred while deleting", 'error');
       } finally {
         setLoading(false);
       }
@@ -199,7 +176,7 @@ const Services = () => {
       description: '',
       location: '',
       price: '',
-      history: '', // Réinitialiser l'histoire
+      history: '',
       image: null
     });
     setPreviewUrl(null);
@@ -208,18 +185,14 @@ const Services = () => {
 
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
-    
-    // Faire disparaître la notification après 3 secondes
     setTimeout(() => {
       setNotification(null);
     }, 3000);
   };
 
-  // Formatter la date pour l'affichage
   const formatDate = (date) => {
     if (!date) return '';
-    
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
@@ -252,21 +225,21 @@ const Services = () => {
         <div className="section-container">
           <div className="location-form-container">
             <h2 className="section-title">
-              {editingId ? 'Modifier un lieu' : 'Ajouter un nouveau lieu à visiter'}
+              {editingId ? 'Edit a Location' : 'Add a New Place to Visit'}
             </h2>
             
             <form onSubmit={handleSubmit} className="location-form">
               <div className="form-grid">
                 <div className="form-left">
                   <div className="form-group">
-                    <label className="form-label">Titre</label>
+                    <label className="form-label">Title</label>
                     <input
                       type="text"
                       name="title"
                       value={formData.title}
                       onChange={handleInputChange}
                       className="form-input"
-                      placeholder="Nom du lieu"
+                      placeholder="Place name"
                       required
                       disabled={loading}
                     />
@@ -279,22 +252,21 @@ const Services = () => {
                       value={formData.description}
                       onChange={handleInputChange}
                       className="form-textarea"
-                      placeholder="Description du lieu"
+                      placeholder="Place description"
                       rows="4"
                       required
                       disabled={loading}
                     ></textarea>
                   </div>
                   
-                  {/* Nouveau champ pour l'histoire */}
                   <div className="form-group">
-                    <label className="form-label">Histoire</label>
+                    <label className="form-label">History</label>
                     <textarea
                       name="history"
                       value={formData.history}
                       onChange={handleInputChange}
                       className="form-textarea"
-                      placeholder="Histoire et contexte culturel du lieu"
+                      placeholder="Historical and cultural context"
                       rows="6"
                       disabled={loading}
                     ></textarea>
@@ -303,28 +275,28 @@ const Services = () => {
                 
                 <div className="form-right">
                   <div className="form-group">
-                    <label className="form-label">Localisation</label>
+                    <label className="form-label">Location</label>
                     <input
                       type="text"
                       name="location"
                       value={formData.location}
                       onChange={handleInputChange}
                       className="form-input"
-                      placeholder="Ville, région"
+                      placeholder="City, region"
                       required
                       disabled={loading}
                     />
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Prix</label>
+                    <label className="form-label">Price</label>
                     <input
                       type="text"
                       name="price"
                       value={formData.price}
                       onChange={handleInputChange}
                       className="form-input"
-                      placeholder="Ex: 100 MAD ou Gratuit"
+                      placeholder="Ex: 100 MAD or Free"
                       required
                       disabled={loading}
                     />
@@ -342,7 +314,7 @@ const Services = () => {
                     
                     {previewUrl && (
                       <div className="image-preview">
-                        <img src={previewUrl} alt="Aperçu" />
+                        <img src={previewUrl} alt="Preview" />
                       </div>
                     )}
                   </div>
@@ -357,7 +329,7 @@ const Services = () => {
                       className="submit-button"
                       disabled={loading}
                     >
-                      {loading ? 'Mise à jour...' : 'Mettre à jour'}
+                      {loading ? 'Updating...' : 'Update'}
                     </button>
                     <button 
                       type="button" 
@@ -365,7 +337,7 @@ const Services = () => {
                       onClick={resetForm}
                       disabled={loading}
                     >
-                      Annuler
+                      Cancel
                     </button>
                   </>
                 ) : (
@@ -374,7 +346,7 @@ const Services = () => {
                     className="submit-button"
                     disabled={loading}
                   >
-                    {loading ? 'Ajout en cours...' : 'Ajouter'}
+                    {loading ? 'Adding...' : 'Add'}
                   </button>
                 )}
               </div>
@@ -383,11 +355,11 @@ const Services = () => {
 
           {loading && locations.length === 0 ? (
             <div className="loading-container">
-              <p>Chargement des lieux...</p>
+              <p>Loading locations...</p>
             </div>
           ) : locations.length > 0 ? (
             <div className="locations-container">
-              <h2 className="section-title">Lieux à visiter au Maroc</h2>
+              <h2 className="section-title">Places to Visit in Morocco</h2>
               
               <div className="locations-grid">
                 {locations.map((location) => (
@@ -399,10 +371,9 @@ const Services = () => {
                       <h3 className="location-title">{location.title}</h3>
                       <p className="location-description">{location.description}</p>
                       
-                      {/* Affichage de l'histoire si elle existe */}
                       {location.history && (
                         <div className="location-history">
-                          <h4 className="history-title">Histoire</h4>
+                          <h4 className="history-title">History</h4>
                           <p className="history-text">{location.history}</p>
                         </div>
                       )}
@@ -418,7 +389,7 @@ const Services = () => {
                         </div>
                       </div>
                       <div className="location-date">
-                        Ajouté le {formatDate(location.createdAt)}
+                        Added on {formatDate(location.createdAt)}
                       </div>
                       <div className="location-actions">
                         <button 
@@ -426,14 +397,14 @@ const Services = () => {
                           onClick={() => handleEdit(location)}
                           disabled={loading}
                         >
-                          Modifier
+                          Edit
                         </button>
                         <button 
                           className="delete-button"
                           onClick={() => handleDelete(location.id)}
                           disabled={loading}
                         >
-                          Supprimer
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -443,7 +414,7 @@ const Services = () => {
             </div>
           ) : (
             <div className="empty-locations-message">
-              <p>Aucun lieu n'a encore été ajouté. Utilisez le formulaire ci-dessus pour ajouter votre premier lieu à visiter.</p>
+              <p>No places have been added yet. Use the form above to add your first place to visit.</p>
             </div>
           )}
         </div>

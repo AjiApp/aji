@@ -1,24 +1,26 @@
-/* Styles globaux pour l'application */
+/* Styles globaux améliorés pour l'application */
 .app-container {
   min-height: 100vh;
-  background-color: var(--bg-light);
+  background-color: #f8f9fc;
   display: flex;
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(240, 240, 250, 0.8));
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(240, 242, 255, 0.8));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .app-container.dark {
-  background-color: var(--bg-dark);
-  background-image: linear-gradient(to bottom, rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 1));
+  background-color: #111827;
+  background-image: linear-gradient(to bottom, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 1));
 }
 
 /* Styles pour la sidebar fixe */
 .sidebar-container {
-  width: 256px;
+  width: 260px;
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   z-index: 10;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
 }
 
 /* Styles pour la zone principale */
@@ -27,91 +29,262 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 100vh;
 }
 
 .main-content.with-sidebar {
-  margin-left: 256px;
+  margin-left: 260px;
+}
+
+/* Header amélioré - plus stable et professionnel */
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.app-container.dark .header {
+  background-color: #1f2937;
+  border-color: rgba(55, 65, 81, 0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.header-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+}
+
+.app-container.dark .header-logo {
+  color: white;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #4b5563;
+  background-color: rgba(243, 244, 246, 0.6);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.app-container.dark .header-icon-button {
+  color: #d1d5db;
+  background-color: rgba(55, 65, 81, 0.4);
+}
+
+.header-icon-button:hover {
+  background-color: rgba(243, 244, 246, 1);
+  transform: translateY(-2px);
+}
+
+.app-container.dark .header-icon-button:hover {
+  background-color: rgba(55, 65, 81, 0.8);
+}
+
+.notification-button {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.app-container.dark .notification-badge {
+  border-color: #1f2937;
 }
 
 /* Styles pour la barre de recherche */
 .search-bar {
-  background-color: var(--bg-light);
-  border-bottom: 1px solid var(--border-light);
-  padding: 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+  padding: 16px 24px;
+  transition: all 0.3s ease;
 }
 
 .app-container.dark .search-bar {
-  background-color: var(--bg-dark);
-  border-color: var(--border-dark);
+  background-color: #1f2937;
+  border-color: rgba(55, 65, 81, 0.7);
 }
 
 .search-input-container {
   position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input-container:before {
+  content: "🔍";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #9ca3af;
+  z-index: 1;
 }
 
 .search-input {
   width: 100%;
-  padding: 8px 8px 8px 40px;
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  background-color: var(--bg-input-light);
-  color: var(--text-primary-light);
+  padding: 12px 12px 12px 42px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  background-color: #f9fafb;
+  color: #111827;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  outline: none;
 }
 
 .app-container.dark .search-input {
-  border-color: var(--border-dark);
-  background-color: var(--bg-input-dark);
-  color: var(--text-primary-dark);
+  border-color: #374151;
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+.app-container.dark .search-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
 /* Styles pour la zone de contenu */
 .content-area {
   flex: 1;
-  overflow: auto;
-  padding: 16px;
+  padding: 24px;
+  max-width: auto;
+  transition: all 0.3s ease;
+}
+
+/* Animations pour une expérience utilisateur fluide */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes slideInUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-up {
+  animation: slideInUp 0.5s ease-out;
 }
 
 /* Message de bienvenue */
 .welcome-container {
-  background-color: var(--bg-light);
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  margin: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  padding: 32px;
+  margin: 16px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 320px;
   text-align: center;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 .app-container.dark .welcome-container {
-  background-color: var(--bg-dark);
-  border-color: var(--border-dark);
+  background-color: #1f2937;
+  border-color: #374151;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.app-container.dark .welcome-container:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.25);
 }
 
 .welcome-container h2 {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 12px;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.app-container.dark .welcome-container h2 {
+  color: #f9fafb;
 }
 
 .welcome-container p {
-  color: var(--text-secondary-light);
-  max-width: 400px;
+  color: #6b7280;
+  max-width: 500px;
+  line-height: 1.6;
+  font-size: 16px;
 }
 
 .app-container.dark .welcome-container p {
-  color: var(--text-secondary-dark);
+  color: #d1d5db;
 }
 
 /* Menu mobile overlay */
 .mobile-menu-overlay {
   position: fixed;
-  top: 60px; /* Hauteur du header */
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -119,20 +292,48 @@
   z-index: 20;
   display: flex;
   justify-content: flex-start;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Styles globaux pour les cartes et conteneurs */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.app-container.dark .card {
+  background-color: #1f2937;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03);
+}
+
+.app-container.dark .card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Styles globaux pour notifications de feedback */
 .notification {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 6px;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 24px;
+  border-radius: 12px;
   color: white;
   font-weight: 500;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   z-index: 100;
-  animation: slideIn 0.3s ease-out forwards;
+  animation: slideIn 0.4s ease-out forwards;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
 }
 
 @keyframes slideIn {
@@ -152,13 +353,126 @@
   background-color: #3b82f6;
 }
 
+.notification-icon {
+  font-size: 20px;
+}
+
+.notification-message {
+  flex: 1;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.notification-close:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Styles pour les boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.app-container.dark .btn-secondary {
+  background-color: #374151;
+  color: #e5e7eb;
+  border-color: #4b5563;
+}
+
+.app-container.dark .btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Loading spinner */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.loading:after {
+  content: '';
+  width: 30px;
+  height: 30px;
+  margin-left: 16px;
+  border: 3px solid #e5e7eb;
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.app-container.dark .loading {
+  color: #d1d5db;
+}
+
+.app-container.dark .loading:after {
+  border-color: #4b5563;
+  border-top-color: #60a5fa;
+}
+
 /* Adaptations pour mobile */
 @media (max-width: 767px) {
+  .header {
+    height: 64px;
+    padding: 0 16px;
+  }
+  
   .main-content {
     padding-bottom: 60px; /* Espace pour la barre de navigation mobile */
   }
   
   .content-area {
-    padding: 8px;
+    padding: 16px;
+  }
+  
+  .welcome-container {
+    padding: 24px 16px;
+  }
+  
+  .mobile-navbar {
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   }
 }
