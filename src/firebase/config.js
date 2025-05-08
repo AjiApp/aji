@@ -9,11 +9,10 @@ const firebaseConfig = {
   apiKey: "AIzaSyBCQcGXm7iqF9kzjOCYIMfzzwoyRtO04jE",
   authDomain: "ajiapp-d436f.firebaseapp.com",
   projectId: "ajiapp-d436f",
-  storageBucket: "ajiapp-d436f.appspot.com", // corrected storage bucket
+  storageBucket: "ajiapp-d436f.firebasestorage.app",
   messagingSenderId: "486612088522",
   appId: "1:486612088522:web:485d1d949cbabc392be633"
 };
-
 // Initialisation de Firebase
 const app = initializeApp(firebaseConfig);
 
