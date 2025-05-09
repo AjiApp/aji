@@ -80,6 +80,8 @@ const MainLayout = ({ children }) => {
           <Sidebar 
             active={activePage}
             setActivePage={handlePageChange}
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
           />
         </div>
       )}
@@ -103,6 +105,8 @@ const MainLayout = ({ children }) => {
               setActivePage={handlePageChange}
               isMobile={true}
               closeMobileMenu={() => setIsMobileMenuOpen(false)}
+              isDarkMode={isDarkMode}
+              toggleDarkMode={toggleDarkMode}
             />
           </div>
         )}
@@ -131,6 +135,7 @@ const MainLayout = ({ children }) => {
           <MobileNavbar 
             active={activePage}
             setActivePage={handlePageChange}
+            isDarkMode={isDarkMode}
           />
         )}
       </div>

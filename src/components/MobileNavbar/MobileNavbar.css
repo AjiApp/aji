@@ -1,4 +1,4 @@
-/* MobileNavbar.css - Design professionnel amélioré */
+/* MobileNavbar.css - Design professionnel amélioré avec la couleur #97051D */
 .mobile-navbar {
   position: fixed;
   bottom: 0;
@@ -13,7 +13,7 @@
 }
 
 :root.dark .mobile-navbar {
-  background-color: #1f2937;
+  background-color: #0f172a;
   border-color: rgba(55, 65, 81, 0.7);
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);
 }
@@ -54,14 +54,14 @@
   left: 50%;
   width: 0;
   height: 3px;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: linear-gradient(135deg, #97051D, #c51128);
   transform: translateX(-50%);
   transition: width 0.3s ease;
   border-radius: 0 0 4px 4px;
 }
 
 .mobile-navbar-item.active {
-  color: #f97316;
+  color: #97051D;
 }
 
 .mobile-navbar-item.active::before {
@@ -69,7 +69,7 @@
 }
 
 :root.dark .mobile-navbar-item.active {
-  color: #f97316;
+  color: #f87171;
 }
 
 .mobile-navbar-item:active {
@@ -83,6 +83,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s;
+}
+
+.mobile-navbar-item:hover .mobile-navbar-icon {
+  transform: translateY(-2px);
+}
+
+.mobile-navbar-item.active .mobile-navbar-icon {
+  transform: translateY(-2px);
 }
 
 .mobile-navbar-label {
@@ -94,7 +103,7 @@
 /* Ripple effect */
 .mobile-navbar-item .ripple {
   position: absolute;
-  background: rgba(249, 115, 22, 0.2);
+  background: rgba(151, 5, 29, 0.2);
   border-radius: 50%;
   transform: scale(0);
   animation: ripple 0.6s ease-out;
@@ -114,7 +123,7 @@
   width: 20%;
   bottom: 0;
   transition: transform 0.3s ease;
-  background: linear-gradient(90deg, #f97316, #ea580c);
+  background: linear-gradient(90deg, #97051D, #c51128);
   border-radius: 4px 4px 0 0;
 }
 
@@ -140,7 +149,7 @@
   position: absolute;
   top: 10px;
   right: 40%;
-  background-color: #ef4444;
+  background-color: #97051D;
   color: white;
   font-size: 8px;
   font-weight: 700;

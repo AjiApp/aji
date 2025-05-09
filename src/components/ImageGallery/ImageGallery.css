@@ -1,0 +1,414 @@
+/* src/components/ImageGallery/ImageGallery.css */
+.image-gallery {
+    position: relative;
+    width: 100%;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  :root.dark .image-gallery {
+    background-color: #1f2937;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .image-gallery.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Conteneur principal */
+  .gallery-main {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  /* Conteneur d'image */
+  .gallery-image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .gallery-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+  
+  .gallery-image-container.zoomed {
+    cursor: grab;
+  }
+  
+  .gallery-image-container.zoomed:active {
+    cursor: grabbing;
+  }
+  
+  /* Placeholder quand il n'y a pas d'image */
+  .gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  :root.dark .gallery-placeholder {
+    color: #9ca3af;
+  }
+  
+  .placeholder-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+  
+  .btn-add-image {
+    background-color: #97051D;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-add-image:hover {
+    background-color: #7c0418;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(151, 5, 29, 0.2);
+  }
+  
+  /* Boutons de navigation */
+  .gallery-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .gallery-nav-button:hover {
+    background-color: white;
+    color: #97051D;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .gallery-nav-button.prev {
+    left: 16px;
+  }
+  
+  .gallery-nav-button.next {
+    right: 16px;
+  }
+  
+  :root.dark .gallery-nav-button {
+    background-color: rgba(31, 41, 55, 0.8);
+    color: #d1d5db;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  :root.dark .gallery-nav-button:hover {
+    background-color: #1f2937;
+    color: #f87171;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Contrôles */
+  .gallery-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 30px;
+    padding: 6px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .gallery-controls:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  :root.dark .gallery-controls {
+    background-color: rgba(31, 41, 55, 0.8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  :root.dark .gallery-controls:hover {
+    background-color: rgba(31, 41, 55, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  .gallery-control-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    color: #4b5563;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .gallery-control-button:hover {
+    background-color: rgba(151, 5, 29, 0.1);
+    color: #97051D;
+    transform: scale(1.1);
+  }
+  
+  .gallery-control-button.delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+  
+  :root.dark .gallery-control-button {
+    color: #d1d5db;
+  }
+  
+  :root.dark .gallery-control-button:hover {
+    background-color: rgba(151, 5, 29, 0.2);
+    color: #f87171;
+  }
+  
+  :root.dark .gallery-control-button.delete:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+  
+  /* Vignettes */
+  .gallery-thumbnails {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 12px;
+    background-color: rgba(249, 250, 251, 0.5);
+    border-top: 1px solid rgba(229, 231, 235, 0.5);
+    max-height: 100px;
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb transparent;
+  }
+  
+  :root.dark .gallery-thumbnails {
+    background-color: rgba(31, 41, 55, 0.5);
+    border-top: 1px solid rgba(55, 65, 81, 0.5);
+    scrollbar-color: #4b5563 transparent;
+  }
+  
+  .gallery-thumbnails::-webkit-scrollbar {
+    height: 5px;
+  }
+  
+  .gallery-thumbnails::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .gallery-thumbnails::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 20px;
+  }
+  
+  :root.dark .gallery-thumbnails::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+  }
+  
+  .gallery-thumbnail {
+    flex-shrink: 0;
+    width: 80px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    opacity: 0.7;
+  }
+  
+  .gallery-thumbnail:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  
+  .gallery-thumbnail.active {
+    border-color: #97051D;
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(151, 5, 29, 0.2);
+  }
+  
+  :root.dark .gallery-thumbnail.active {
+    box-shadow: 0 0 0 2px rgba(151, 5, 29, 0.4);
+  }
+  
+  .gallery-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Pagination */
+  .gallery-pagination {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 9;
+  }
+  
+  .image-gallery.fullscreen .gallery-pagination {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+  
+  /* Mode plein écran */
+  .image-gallery.fullscreen .gallery-thumbnails {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-top: none;
+    padding: 16px;
+    max-height: 120px;
+  }
+  
+  .image-gallery.fullscreen .gallery-controls {
+    position: fixed;
+    bottom: 140px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 8px;
+  }
+  
+  .image-gallery.fullscreen .gallery-control-button {
+    color: white;
+  }
+  
+  .image-gallery.fullscreen .gallery-control-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .image-gallery.fullscreen .gallery-control-button.delete:hover {
+    background-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+  
+  .image-gallery.fullscreen .gallery-nav-button {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .image-gallery.fullscreen .gallery-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #97051D;
+  }
+  
+  /* Animation supplémentaire pour les transitions */
+  .gallery-image-container {
+    transition: opacity 0.3s ease;
+  }
+  
+  .gallery-image-container.changing {
+    opacity: 0;
+  }
+  
+  /* Adaptation mobile */
+  @media (max-width: 768px) {
+    .gallery-nav-button {
+      width: 36px;
+      height: 36px;
+    }
+    
+    .gallery-controls {
+      padding: 4px;
+    }
+    
+    .gallery-control-button {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .gallery-thumbnail {
+      width: 60px;
+      height: 45px;
+    }
+    
+    .image-gallery.fullscreen .gallery-controls {
+      bottom: 120px;
+    }
+  }
+  
+  /* Animations spéciales */
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .gallery-thumbnail.active {
+    animation: pulse 2s infinite;
+  }

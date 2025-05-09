@@ -1,4 +1,4 @@
-/* Header.css - Design professionnel */
+/* Header.css - Design professionnel avec la nouvelle couleur principale #97051D */
 .header {
   background-color: white;
   border-bottom: 1px solid rgba(229, 231, 235, 0.7);
@@ -15,7 +15,7 @@
 }
 
 :root.dark .header {
-  background-color: #1f2937;
+  background-color: #1e293b;
   border-color: rgba(55, 65, 81, 0.7);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
@@ -36,21 +36,22 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: linear-gradient(135deg, #97051D, #7c0418);
   border-radius: 10px;
   color: white;
   font-size: 18px;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(234, 88, 12, 0.2);
+  box-shadow: 0 2px 6px rgba(151, 5, 29, 0.3);
   transition: all 0.3s ease;
 }
 
 .header-logo-icon:hover {
   transform: rotate(5deg);
+  box-shadow: 0 4px 8px rgba(151, 5, 29, 0.4);
 }
 
 .header-logo-text {
-  background: linear-gradient(to right, #f97316, #ea580c);
+  background: linear-gradient(to right, #97051D, #c51128);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
@@ -61,7 +62,7 @@
 }
 
 :root.dark .header-logo-icon {
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4);
+  box-shadow: 0 2px 8px rgba(151, 5, 29, 0.5);
 }
 
 /* Boutons d'action */
@@ -95,11 +96,13 @@
   background-color: rgba(243, 244, 246, 1);
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #97051D;
 }
 
 :root.dark .header-icon-button:hover {
   background-color: rgba(55, 65, 81, 0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #f87171;
 }
 
 .notification-button {
@@ -112,13 +115,13 @@
   right: 8px;
   width: 10px;
   height: 10px;
-  background-color: #ef4444;
+  background-color: #97051D;
   border: 2px solid #ffffff;
   border-radius: 50%;
 }
 
 :root.dark .notification-badge {
-  border-color: #1f2937;
+  border-color: #1e293b;
 }
 
 /* User menu styles */
@@ -157,7 +160,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #97051D, #c51128);
   color: white;
   display: flex;
   align-items: center;
@@ -206,7 +209,7 @@
 }
 
 :root.dark .user-dropdown {
-  background-color: #1f2937;
+  background-color: #1e293b;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -226,7 +229,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #97051D, #c51128);
   color: white;
   display: flex;
   align-items: center;
@@ -288,7 +291,7 @@
 
 .user-dropdown-item:hover {
   background-color: #f3f4f6;
-  color: #111827;
+  color: #97051D;
 }
 
 :root.dark .user-dropdown-item {
@@ -296,8 +299,8 @@
 }
 
 :root.dark .user-dropdown-item:hover {
-  background-color: #374151;
-  color: #f9fafb;
+  background-color: #334155;
+  color: #f87171;
 }
 
 /* Adaptations pour mobile */

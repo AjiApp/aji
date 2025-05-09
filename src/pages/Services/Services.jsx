@@ -1,6 +1,6 @@
-// src/pages/Services/Services.jsx
-import { useState } from 'react';
-import { FileSpreadsheet, Upload, Download, Image } from 'lucide-react';
+// src/pages/Services/Services.jsx - Version améliorée
+import { useState, useRef, useEffect } from 'react';
+import { FileSpreadsheet, Upload, Download, Image, Edit2, Trash2, Plus, CheckCircle, RefreshCw } from 'lucide-react';
 import { 
   // Importer les APIs
   locationsApi, 
@@ -9,6 +9,9 @@ import {
 } from '../../api';
 import { exportToExcel, importFromExcel, prepareDataForExport, validateImportData } from '../../utils/excelUtils';
 import BulkImageUpload from '../../components/BulkImageUpload/BulkImageUpload';
+import ImageManager from '../../components/ImageManager/ImageManager';
+import ImageGallery from '../../components/ImageGallery/ImageGallery';
+import ImageCrop from '../../components/ImageCrop/ImageCrop';
 import './Services.css';
 
 const Services = () => {
@@ -25,6 +28,16 @@ const Services = () => {
   });
   const [editingId, setEditingId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [successSubmit, setSuccessSubmit] = useState(false);
+  const [recentlyAddedItem, setRecentlyAddedItem] = useState(null);
+  
+  // Références pour le scroll automatique
+  const formRef = useRef(null);
+  const previewSectionRef = useRef(null);
   
   // États pour les données et le chargement
   const [serviceData, setServiceData] = useState([]);
@@ -46,6 +59,23 @@ const Services = () => {
     { id: 'contacts', name: 'Important Contacts', icon: '📞' },
     { id: 'stadiums', name: 'Stadiums', icon: '🏟️', hasForm: true }
   ];
+
+  // Effet pour faire défiler vers l'élément ajouté récemment
+  useEffect(() => {
+    if (successSubmit && recentlyAddedItem && previewSectionRef.current) {
+      previewSectionRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      
+      // Réinitialiser le statut de succès après un certain temps
+      const timer = setTimeout(() => {
+        setSuccessSubmit(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [successSubmit, recentlyAddedItem]);
 
   // Obtenir l'API correspondant à la catégorie active
   const getActiveApi = () => {
@@ -98,10 +128,12 @@ const Services = () => {
       }
       
       // Scroll to form section
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth'
-      });
+      if (formRef.current) {
+        formRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     } else {
       console.log(`Service clicked: ${serviceId}`);
       alert(`You selected the service: ${serviceId}`);
@@ -118,19 +150,47 @@ const Services = () => {
   };
 
   // Gestion du changement d'image
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (file) => {
     if (file) {
-      setFormData({
-        ...formData,
-        image: file
-      });
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setSelectedImage(file);
+      setShowCropper(true);
     }
+  };
+  
+  // Gérer l'image recadrée
+  const handleCroppedImage = (blob) => {
+    // Convertir le blob en fichier
+    const croppedFile = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+    
+    setFormData({
+      ...formData,
+      image: croppedFile
+    });
+    
+    // Créer l'URL de prévisualisation
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(blob);
+    
+    // Fermer le cropper
+    setShowCropper(false);
+  };
+  
+  // Annuler le recadrage
+  const handleCancelCrop = () => {
+    setShowCropper(false);
+    setSelectedImage(null);
+  };
+  
+  // Supprimer l'image
+  const handleRemoveImage = () => {
+    setFormData({
+      ...formData,
+      image: null
+    });
+    setPreviewUrl(null);
   };
 
   // Soumission du formulaire
@@ -142,6 +202,8 @@ const Services = () => {
     setIsMutating(true);
     
     try {
+      let result;
+      
       if (editingId) {
         // Mettre à jour un élément existant
         const dataParam = activeService === 'accommodation' 
@@ -150,7 +212,7 @@ const Services = () => {
             ? { stadiumData: formData, id: editingId, imageFile: formData.image }
             : { locationData: formData, id: editingId, imageFile: formData.image };
         
-        await api.update(dataParam);
+        result = await api.update(dataParam);
         
         showNotification(`${getFormTitle()} updated successfully`, 'success');
       } else {
@@ -161,9 +223,13 @@ const Services = () => {
             ? { stadiumData: formData, imageFile: formData.image }
             : { locationData: formData, imageFile: formData.image };
         
-        await api.create(dataParam);
+        result = await api.create(dataParam);
         
         showNotification(`${getFormTitle()} added successfully`, 'success');
+        
+        // Définir l'élément récemment ajouté pour l'affichage
+        setRecentlyAddedItem(result);
+        setSuccessSubmit(true);
       }
       
       // Recharger les données
@@ -193,12 +259,14 @@ const Services = () => {
     setEditingId(item.id);
     
     // Scroll vers le formulaire
-    window.scrollTo({
-      top: document.querySelector('.location-form-container').offsetTop - 20,
-      behavior: 'smooth'
-    });
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
-
+  
   // Supprimer un élément
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
@@ -215,6 +283,12 @@ const Services = () => {
         // Si en train d'éditer cet élément, réinitialiser le formulaire
         if (editingId === id) {
           resetForm();
+        }
+        
+        // Si c'est l'élément récemment ajouté, le supprimer aussi
+        if (recentlyAddedItem && recentlyAddedItem.id === id) {
+          setRecentlyAddedItem(null);
+          setSuccessSubmit(false);
         }
         
         showNotification(`${getFormTitle()} deleted successfully`, 'success');
@@ -239,6 +313,11 @@ const Services = () => {
     });
     setPreviewUrl(null);
     setEditingId(null);
+    
+    // Réinitialiser le formulaire HTML
+    if (formRef.current) {
+      formRef.current.reset();
+    }
   };
 
   // Titre du formulaire selon le service sélectionné
@@ -331,10 +410,44 @@ const Services = () => {
       
       // Mettre à jour l'élément avec la nouvelle image
       await api.update(dataParam);
+      
+      // Recharger les données après la mise à jour
+      const newData = await api.getAll();
+      setServiceData(newData);
+      
       return true;
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'image:", error);
       return false;
+    }
+  };
+  
+  // Afficher la galerie d'images
+  const handleViewGallery = () => {
+    // Préparer les images pour la galerie
+    const images = serviceData.map(item => ({
+      url: item.imageUrl,
+      id: item.id,
+      title: item.title
+    }));
+    
+    setGalleryImages(images);
+    setShowGallery(true);
+  };
+  
+  // Gérer l'édition depuis la galerie
+  const handleEditFromGallery = (image) => {
+    const item = serviceData.find(i => i.id === image.id);
+    if (item) {
+      handleEdit(item);
+    }
+    setShowGallery(false);
+  };
+  
+  // Gérer la suppression depuis la galerie
+  const handleDeleteFromGallery = (image) => {
+    if (image.id) {
+      handleDelete(image.id);
     }
   };
 
@@ -374,7 +487,77 @@ const Services = () => {
 
       {activeService && (
         <div className="section-container">
-          <div className="location-form-container">
+          {/* Affichage de l'élément récemment ajouté */}
+          {successSubmit && recentlyAddedItem && (
+            <div className="recently-added-section" ref={previewSectionRef}>
+              <div className="section-header">
+                <h2 className="section-title">
+                  <CheckCircle size={20} className="success-icon" />
+                  Recently Added {getFormTitle()}
+                </h2>
+                <button 
+                  className="refresh-button"
+                  onClick={() => {
+                    setSuccessSubmit(false);
+                    setRecentlyAddedItem(null);
+                    
+                    // Scroll vers le formulaire pour ajouter un nouvel élément
+                    if (formRef.current) {
+                      formRef.current.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                >
+                  <RefreshCw size={16} />
+                  <span>Add Another</span>
+                </button>
+              </div>
+              
+              <div className="recently-added-item">
+                <div className="item-image">
+                  <img src={recentlyAddedItem.imageUrl} alt={recentlyAddedItem.title} />
+                </div>
+                <div className="item-details">
+                  <h3 className="item-title">{recentlyAddedItem.title}</h3>
+                  <p className="item-description">{recentlyAddedItem.description}</p>
+                  
+                  <div className="item-meta">
+                    <div className="item-location">
+                      <span className="meta-icon">📍</span>
+                      <span>{recentlyAddedItem.location}</span>
+                    </div>
+                    {recentlyAddedItem.price && (
+                      <div className="item-price">
+                        <span className="meta-icon">💰</span>
+                        <span>{recentlyAddedItem.price}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="item-actions">
+                    <button 
+                      className="edit-button"
+                      onClick={() => handleEdit(recentlyAddedItem)}
+                    >
+                      <Edit2 size={16} />
+                      <span>Edit</span>
+                    </button>
+                    <button 
+                      className="view-gallery-button"
+                      onClick={handleViewGallery}
+                    >
+                      <Image size={16} />
+                      <span>View Gallery</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="location-form-container" ref={formRef}>
             <h2 className="section-title">
               {editingId ? `Edit ${getFormTitle()}` : `Add New ${getFormTitle()}`}
             </h2>
@@ -450,26 +633,20 @@ const Services = () => {
                       onChange={handleInputChange}
                       className="form-input"
                       placeholder="Ex: 100 MAD or Free"
-                   
                       disabled={isMutating}
                     />
                   </div>
                   
                   <div className="form-group">
                     <label className="form-label">Image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="form-file-input"
+                    <ImageManager
+                      currentImage={formData.image}
+                      currentImageUrl={previewUrl}
+                      onImageChange={handleImageChange}
+                      onImageRemove={handleRemoveImage}
                       disabled={isMutating}
+                      placeholderText="Add an image (click to upload)"
                     />
-                    
-                    {previewUrl && (
-                      <div className="image-preview">
-                        <img src={previewUrl} alt="Preview" />
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -595,6 +772,15 @@ const Services = () => {
                   {activeService === 'visit' && 'Places to Visit in Morocco'}
                   {activeService === 'stadiums' && 'Stadiums in Morocco'}
                 </h2>
+                
+                <button 
+                  className="view-gallery-button"
+                  onClick={handleViewGallery}
+                  disabled={!serviceData?.length}
+                >
+                  <Image size={16} />
+                  <span>View Image Gallery</span>
+                </button>
               </div>
               
               <div className="locations-grid">
@@ -602,6 +788,25 @@ const Services = () => {
                   <div key={item.id} className="location-card">
                     <div className="location-image">
                       <img src={item.imageUrl} alt={item.title} />
+                      
+                      <div className="image-overlay">
+                        <div className="image-actions">
+                          <button 
+                            className="image-action edit"
+                            onClick={() => handleEdit(item)}
+                            title="Edit"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button 
+                            className="image-action delete"
+                            onClick={() => handleDelete(item.id)}
+                            title="Delete"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div className="location-details">
                       <h3 className="location-title">{item.title}</h3>
@@ -653,6 +858,43 @@ const Services = () => {
               <p>No {getFormTitle().toLowerCase()} has been added yet. Use the form above to add your first item.</p>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Popup de recadrage d'image */}
+      {showCropper && selectedImage && (
+        <ImageCrop
+          image={selectedImage}
+          onComplete={handleCroppedImage}
+          onCancel={handleCancelCrop}
+          aspectRatio={16/9}
+          circularCrop={false}
+          minWidth="150px"
+          minHeight="100px"
+        />
+      )}
+      
+      {/* Galerie d'images */}
+      {showGallery && (
+        <div className="gallery-overlay">
+          <div className="gallery-container">
+            <div className="gallery-header">
+              <h3>Image Gallery</h3>
+              <button className="gallery-close" onClick={() => setShowGallery(false)}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="gallery-content">
+              <ImageGallery
+                images={galleryImages}
+                onEdit={handleEditFromGallery}
+                onDelete={handleDeleteFromGallery}
+                showControls={true}
+                height="500px"
+              />
+            </div>
+          </div>
         </div>
       )}
       

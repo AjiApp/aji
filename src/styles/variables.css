@@ -1,66 +1,86 @@
 :root {
-    /* Couleurs principales */
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-light: #60a5fa;
-    --primary-dark: #1e40af;
-    --secondary: #7c3aed;
-    --secondary-hover: #6d28d9;
-    
-    /* Couleurs de texte */
-    --text-primary-light: #1f2937;
-    --text-secondary-light: #4b5563;
-    --text-muted-light: #9ca3af;
-    --text-primary-dark: #f9fafb;
-    --text-secondary-dark: #d1d5db;
-    --text-muted-dark: #6b7280;
-    
-    /* Couleurs de fond */
-    --bg-light: #f3f4f6;
-    --bg-card-light: #ffffff;
-    --bg-input-light: #f9fafb;
-    --bg-dark: #111827;
-    --bg-card-dark: #1f2937;
-    --bg-input-dark: #374151;
-    
-    /* Couleurs de bordure */
-    --border-light: #e5e7eb;
-    --border-dark: #374151;
-    
-    /* Couleurs de statut */
-    --success: #059669;
-    --warning: #d97706;
-    --error: #dc2626;
-    --info: #2563eb;
-    
-    /* Espacement */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
-    --spacing-2xl: 48px;
-    
-    /* Arrondi */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-full: 9999px;
-    
-    /* Ombre */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    
-    /* Grille */
-    --container-width: 1200px;
-    --sidebar-width: 256px;
-    --header-height: 64px;
-    --mobile-nav-height: 56px;
-    
-    /* Transition */
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
-  }
+  /* Couleurs principales - Nouvelle palette avec #97051D comme couleur principale */
+  --primary: #97051D;
+  --primary-hover: #7c0418;
+  --primary-light: #c51128;
+  --primary-dark: #5c030f;
+  --secondary: #4a5568;
+  --secondary-hover: #2d3748;
+  
+  /* Couleurs d'accentuation */
+  --accent-1: #FFC107;
+  --accent-2: #3498db;
+  --accent-3: #2ecc71;
+  
+  /* Couleurs de texte */
+  --text-primary-light: #1f2937;
+  --text-secondary-light: #4b5563;
+  --text-muted-light: #9ca3af;
+  --text-primary-dark: #f9fafb;
+  --text-secondary-dark: #d1d5db;
+  --text-muted-dark: #6b7280;
+  
+  /* Couleurs de fond */
+  --bg-light: #f8fafc;
+  --bg-card-light: #ffffff;
+  --bg-input-light: #f9fafb;
+  --bg-dark: #0f172a;
+  --bg-card-dark: #1e293b;
+  --bg-input-dark: #334155;
+  
+  /* Couleurs de bordure */
+  --border-light: #e5e7eb;
+  --border-dark: #334155;
+  
+  /* Couleurs de statut */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  
+  /* Espacement */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* Arrondi */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* Ombre */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-primary: 0 4px 14px rgba(151, 5, 29, 0.25);
+  
+  /* Grille */
+  --container-width: 1200px;
+  --sidebar-width: 260px;
+  --header-height: 70px;
+  --mobile-nav-height: 65px;
+  
+  /* Transition */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Police */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  
+  /* Taille de police */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+}

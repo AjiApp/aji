@@ -1,6 +1,6 @@
-// src/pages/Features/Features.jsx
-import { useState } from 'react';
-import { FileSpreadsheet, Upload, Download, Image } from 'lucide-react';
+// src/pages/Features/Features.jsx - Version améliorée
+import { useState, useRef } from 'react';
+import { FileSpreadsheet, Upload, Download, Image, Edit2, Trash2, Plus, Info } from 'lucide-react';
 import { 
   useFeatures, 
   useAddFeature, 
@@ -9,6 +9,9 @@ import {
 } from '../../hooks/useFeatures';
 import { exportToExcel, importFromExcel, prepareDataForExport, validateImportData } from '../../utils/excelUtils';
 import BulkImageUpload from '../../components/BulkImageUpload/BulkImageUpload';
+import ImageManager from '../../components/ImageManager/ImageManager';
+import ImageGallery from '../../components/ImageGallery/ImageGallery';
+import ImageCrop from '../../components/ImageCrop/ImageCrop';
 import './Features.css';
 
 const FeaturesPage = () => {
@@ -21,6 +24,13 @@ const FeaturesPage = () => {
   });
   const [editId, setEditId] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
+  
+  // Référence pour le formulaire
+  const formRef = useRef(null);
 
   // Hooks React Query
   const { 
@@ -36,11 +46,11 @@ const FeaturesPage = () => {
 
   // Fonctionnalités et caractéristiques populaires
   const popularFeatures = [
-    "Advanced Search",
-    "Real-Time Notifications",
-    "Customizable Dashboard",
-    "Offline Mode",
-    "Multi-Device Sync"
+    "Gestion d'images avancée",
+    "Import/Export Excel",
+    "Interface responsive",
+    "Mode sombre",
+    "Authentification sécurisée"
   ];
 
   // Gestion des champs de formulaire
@@ -53,21 +63,53 @@ const FeaturesPage = () => {
   };
 
   // Gestion du changement d'image
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (file) => {
+    setFormData({
+      ...formData,
+      image: file
+    });
+    
+    // Ouvrir l'éditeur de recadrage si un fichier est sélectionné
     if (file) {
-      setFormData({
-        ...formData,
-        image: file
-      });
-      
-      // Créer l'URL de prévisualisation
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setSelectedImage(file);
+      setShowCropper(true);
     }
+  };
+  
+  // Gérer l'image recadrée
+  const handleCroppedImage = (blob) => {
+    // Convertir le blob en fichier
+    const croppedFile = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+    
+    setFormData({
+      ...formData,
+      image: croppedFile
+    });
+    
+    // Créer l'URL de prévisualisation
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(blob);
+    
+    // Fermer le cropper
+    setShowCropper(false);
+  };
+  
+  // Annuler le recadrage
+  const handleCancelCrop = () => {
+    setShowCropper(false);
+    setSelectedImage(null);
+  };
+  
+  // Supprimer l'image
+  const handleRemoveImage = () => {
+    setFormData({
+      ...formData,
+      image: null
+    });
+    setImagePreview(null);
   };
 
   // Soumission du formulaire
@@ -117,6 +159,11 @@ const FeaturesPage = () => {
     });
     setImagePreview(null);
     setEditId(null);
+    
+    // Réinitialiser les champs de formulaire
+    if (formRef.current) {
+      formRef.current.reset();
+    }
   };
 
   // Modifier une fonctionnalité
@@ -130,7 +177,7 @@ const FeaturesPage = () => {
     setEditId(content.id);
     
     // Scroll vers le formulaire
-    document.querySelector('.add-content-card').scrollIntoView({ 
+    formRef.current.scrollIntoView({ 
       behavior: 'smooth',
       block: 'start'
     });
@@ -200,16 +247,47 @@ const FeaturesPage = () => {
       // Mettre à jour l'élément avec la nouvelle image
       await updateFeature.mutateAsync({
         id,
-        contentData: {
-          // Nous avons uniquement besoin de mettre à jour l'image
-          // sans toucher aux autres propriétés
-        },
+        contentData: {},
         imageFile
       });
       return true;
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'image:", error);
       return false;
+    }
+  };
+  
+  // Afficher la galerie d'images
+  const handleViewGallery = () => {
+    // Préparer les images pour la galerie
+    const images = contents.map(content => ({
+      url: content.imageUrl,
+      id: content.id,
+      title: content.title
+    }));
+    
+    setGalleryImages(images);
+    setShowGallery(true);
+  };
+  
+  // Fermer la galerie
+  const handleCloseGallery = () => {
+    setShowGallery(false);
+  };
+  
+  // Modifier une image depuis la galerie
+  const handleEditFromGallery = (image) => {
+    const content = contents.find(c => c.id === image.id);
+    if (content) {
+      handleEdit(content);
+    }
+    setShowGallery(false);
+  };
+  
+  // Supprimer une image depuis la galerie
+  const handleDeleteFromGallery = (image) => {
+    if (image.id) {
+      handleDelete(image.id);
     }
   };
 
@@ -235,7 +313,7 @@ const FeaturesPage = () => {
             {editId ? 'Edit Content' : 'Add New Content'}
           </h3>
           
-          <form className="content-form" onSubmit={handleSubmit}>
+          <form className="content-form" onSubmit={handleSubmit} ref={formRef}>
             <div className="form-group">
               <label className="form-label">Title</label>
               <input 
@@ -266,19 +344,15 @@ const FeaturesPage = () => {
             
             <div className="form-group">
               <label className="form-label">Image</label>
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleImageChange}
-                className="form-file-input"
-                disabled={addFeature.isPending || updateFeature.isPending}
-              />
               
-              {imagePreview && (
-                <div className="image-preview">
-                  <img src={imagePreview} alt="Preview" />
-                </div>
-              )}
+              <ImageManager
+                currentImage={formData.image}
+                currentImageUrl={imagePreview}
+                onImageChange={handleImageChange}
+                onImageRemove={handleRemoveImage}
+                disabled={addFeature.isPending || updateFeature.isPending}
+                placeholderText="Add an image (click to upload)"
+              />
             </div>
             
             {/* Section Excel intégrée dans le formulaire */}
@@ -396,6 +470,26 @@ const FeaturesPage = () => {
             </ul>
           </div>
           
+          <div className="image-management-card">
+            <h3 className="section-title">Image Management</h3>
+            
+            <div className="image-tools">
+              <button 
+                className="image-tool-button"
+                onClick={handleViewGallery}
+                disabled={!contents?.length}
+              >
+                <Image size={18} />
+                <span>View Image Gallery</span>
+              </button>
+              
+              <div className="image-tool-info">
+                <Info size={16} />
+                <span>Manage, crop, and organize your images efficiently</span>
+              </div>
+            </div>
+          </div>
+          
           <div className="support-card">
             <h3 className="support-title">Need Help?</h3>
             <p className="support-text">
@@ -416,6 +510,14 @@ const FeaturesPage = () => {
         <div className="content-list-section">
           <div className="content-list-header">
             <h2 className="content-list-title">Your Features</h2>
+            
+            <button 
+              className="add-feature-button"
+              onClick={() => formRef.current.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Plus size={16} />
+              <span>Add Feature</span>
+            </button>
           </div>
           
           <div className="content-cards">
@@ -423,6 +525,25 @@ const FeaturesPage = () => {
               <div key={content.id} className="content-card">
                 <div className="content-card-image">
                   <img src={content.imageUrl} alt={content.title} />
+                  
+                  <div className="image-overlay">
+                    <div className="image-actions">
+                      <button 
+                        className="image-action edit"
+                        onClick={() => handleEdit(content)}
+                        title="Edit"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      <button 
+                        className="image-action delete"
+                        onClick={() => handleDelete(content.id)}
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div className="content-card-body">
                   <h3 className="content-card-title">{content.title}</h3>
@@ -456,6 +577,43 @@ const FeaturesPage = () => {
       ) : (
         <div className="empty-content-message">
           <p>No content added yet. Use the form above to add your first content.</p>
+        </div>
+      )}
+      
+      {/* Popup de recadrage d'image */}
+      {showCropper && selectedImage && (
+        <ImageCrop
+          image={selectedImage}
+          onComplete={handleCroppedImage}
+          onCancel={handleCancelCrop}
+          aspectRatio={16/9}
+          circularCrop={false}
+          minWidth="150px"
+          minHeight="100px"
+        />
+      )}
+      
+      {/* Galerie d'images */}
+      {showGallery && (
+        <div className="gallery-overlay">
+          <div className="gallery-container">
+            <div className="gallery-header">
+              <h3>Image Gallery</h3>
+              <button className="gallery-close" onClick={handleCloseGallery}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="gallery-content">
+              <ImageGallery
+                images={galleryImages}
+                onEdit={handleEditFromGallery}
+                onDelete={handleDeleteFromGallery}
+                showControls={true}
+                height="500px"
+              />
+            </div>
+          </div>
         </div>
       )}
       

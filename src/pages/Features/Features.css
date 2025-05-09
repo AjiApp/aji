@@ -1,4 +1,4 @@
-/* Features.css - Base styles plus enhancements */
+/* Features.css - Styles améliorés avec la couleur principale #97051D */
 
 .features-page {
   padding: 2rem;
@@ -8,7 +8,7 @@
 }
 
 :root.dark .features-page {
-  background-color: #111827;
+  background-color: #0f172a;
 }
 
 .page-title {
@@ -16,7 +16,7 @@
   font-weight: 700;
   margin-bottom: 2rem;
   color: #1f2937;
-  border-bottom: 2px solid #3b82f6;
+  border-bottom: 2px solid #97051D;
   padding-bottom: 0.5rem;
   display: inline-block;
 }
@@ -40,20 +40,24 @@
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  border: 1px solid rgba(229, 231, 235, 0.7);
 }
 
 :root.dark .add-content-card {
   background: #1e293b;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(55, 65, 81, 0.7);
 }
 
 .add-content-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: rgba(151, 5, 29, 0.3);
 }
 
 :root.dark .add-content-card:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(151, 5, 29, 0.5);
 }
 
 .section-title {
@@ -72,7 +76,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #3b82f6;
+  background: #97051D;
   border-radius: 2px;
 }
 
@@ -115,9 +119,14 @@
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: #3b82f6;
+  border-color: #97051D;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(151, 5, 29, 0.1);
+}
+
+:root.dark .form-input:focus,
+:root.dark .form-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(151, 5, 29, 0.3);
 }
 
 .form-file-input {
@@ -156,18 +165,26 @@
 }
 
 .submit-button {
-  background-color: #10b981;
+  background-color: #97051D;
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(151, 5, 29, 0.2);
 }
 
 .submit-button:hover {
-  background-color: #059669;
+  background-color: #7c0418;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(151, 5, 29, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(151, 5, 29, 0.2);
 }
 
 .cancel-button {
@@ -178,11 +195,12 @@
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .cancel-button:hover {
   background-color: #4b5563;
+  transform: translateY(-2px);
 }
 
 /* Right column */
@@ -194,29 +212,37 @@
 }
 
 .popular-features-card,
-.support-card {
+.support-card,
+.image-management-card {
   background: #ffffff;
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  border: 1px solid rgba(229, 231, 235, 0.7);
 }
 
 :root.dark .popular-features-card,
-:root.dark .support-card {
+:root.dark .support-card,
+:root.dark .image-management-card {
   background: #1e293b;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(55, 65, 81, 0.7);
 }
 
 .popular-features-card:hover,
-.support-card:hover {
+.support-card:hover,
+.image-management-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: rgba(151, 5, 29, 0.3);
 }
 
 :root.dark .popular-features-card:hover,
-:root.dark .support-card:hover {
+:root.dark .support-card:hover,
+:root.dark .image-management-card:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(151, 5, 29, 0.5);
 }
 
 .popular-features-list {
@@ -237,18 +263,91 @@
 
 .popular-feature-item:hover {
   transform: translateX(5px);
+  color: #97051D;
 }
 
 :root.dark .popular-feature-item {
   color: #d1d5db;
 }
 
+:root.dark .popular-feature-item:hover {
+  color: #f87171;
+}
+
 .feature-dot {
   width: 8px;
   height: 8px;
-  background-color: #3b82f6;
+  background-color: #97051D;
   border-radius: 50%;
   margin-right: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.popular-feature-item:hover .feature-dot {
+  background-color: #97051D;
+  transform: scale(1.3);
+  box-shadow: 0 0 0 3px rgba(151, 5, 29, 0.2);
+}
+
+/* Image management tools */
+.image-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.image-tool-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #97051D;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(151, 5, 29, 0.2);
+}
+
+.image-tool-button:hover {
+  background-color: #7c0418;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(151, 5, 29, 0.3);
+}
+
+.image-tool-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.image-tool-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: rgba(151, 5, 29, 0.05);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+:root.dark .image-tool-info {
+  background-color: rgba(151, 5, 29, 0.1);
+  color: #d1d5db;
+}
+
+.image-tool-info svg {
+  color: #97051D;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+:root.dark .image-tool-info svg {
+  color: #f87171;
 }
 
 /* Support */
@@ -274,7 +373,7 @@
 }
 
 .support-button {
-  background-color: #2563eb;
+  background-color: #4b5563;
   color: white;
   padding: 0.6rem 1.25rem;
   border: none;
@@ -285,7 +384,7 @@
 }
 
 .support-button:hover {
-  background-color: #1d4ed8;
+  background-color: #374151;
   transform: scale(1.05);
 }
 
@@ -311,10 +410,11 @@
   font-weight: 700;
   margin-bottom: 1.0;
   color: #111827;
-  border-bottom: 2px solid #3b82f6;
+  border-bottom: 2px solid #97051D;
   padding-bottom: 0.5rem;
   display: inline-block;
 }
+
 .content-list-header {
   display: flex;
   justify-content: space-between;
@@ -322,6 +422,26 @@
   margin-bottom: 20px;
 }
 
+.add-feature-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background-color: #97051D;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(151, 5, 29, 0.2);
+}
+
+.add-feature-button:hover {
+  background-color: #7c0418;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(151, 5, 29, 0.3);
+}
 
 :root.dark .content-list-title {
   color: #f3f4f6;
@@ -341,25 +461,30 @@
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(229, 231, 235, 0.7);
 }
 
 :root.dark .content-card {
   background: #1e293b;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(55, 65, 81, 0.7);
 }
 
 .content-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(151, 5, 29, 0.3);
 }
 
 :root.dark .content-card:hover {
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(151, 5, 29, 0.5);
 }
 
 .content-card-image {
   height: 180px;
   overflow: hidden;
+  position: relative;
 }
 
 .content-card-image img {
@@ -371,6 +496,57 @@
 
 .content-card:hover .content-card-image img {
   transform: scale(1.1);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.content-card:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.image-action {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.image-action:hover {
+  transform: translateY(-3px);
+}
+
+.image-action.edit:hover {
+  background: #97051D;
+  color: white;
+}
+
+.image-action.delete:hover {
+  background: #ef4444;
+  color: white;
 }
 
 .content-card-body {
@@ -400,56 +576,6 @@
 
 :root.dark .content-card-description {
   color: #d1d5db;
-}
-
-/* Styles pour la section Histoire */
-.content-card-history {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-  margin-bottom: 1rem;
-}
-
-:root.dark .content-card-history {
-  border-color: #4b5563;
-}
-
-.history-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #111827;
-}
-
-:root.dark .history-title {
-  color: #f3f4f6;
-}
-
-.history-text {
-  font-size: 0.9rem;
-  color: #4b5563;
-  line-height: 1.6;
-  max-height: 120px;
-  overflow: hidden;
-  position: relative;
-}
-
-:root.dark .history-text {
-  color: #d1d5db;
-}
-
-.history-text::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 30px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
-}
-
-:root.dark .history-text::after {
-  background: linear-gradient(to bottom, rgba(30, 41, 59, 0), rgba(30, 41, 59, 1));
 }
 
 .content-card-footer {
@@ -486,15 +612,18 @@
   border-radius: 0.375rem;
   font-weight: 500;
   transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .edit-button {
-  background-color: #3b82f6;
+  background-color: #97051D;
   color: white;
 }
 
 .edit-button:hover {
-  background-color: #2563eb;
+  background-color: #7c0418;
+  transform: translateY(-2px);
 }
 
 .delete-button {
@@ -504,54 +633,99 @@
 
 .delete-button:hover {
   background-color: #dc2626;
+  transform: translateY(-2px);
 }
 
-/* Styles pour les notifications */
-.notification {
+/* Gallery overlay */
+.gallery-overlay {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 6px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.gallery-container {
+  background-color: white;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: zoomIn 0.3s ease;
+}
+
+:root.dark .gallery-container {
+  background-color: #1e293b;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #97051D;
   color: white;
-  font-weight: 500;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  animation: slideIn 0.3s ease-out forwards;
 }
 
-@keyframes slideIn {
-  from { transform: translateY(100px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+:root.dark .gallery-header {
+  border-color: #4b5563;
 }
 
-.notification.success {
-  background-color: #10b981;
+.gallery-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
 }
 
-.notification.error {
-  background-color: #ef4444;
+.gallery-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
-.notification.info {
-  background-color: #3b82f6;
+.gallery-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: rotate(90deg);
 }
 
-/* Loading et messages vides */
-.loading-container, 
-.empty-content-message {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-  color: #6b7280;
+.gallery-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
 }
 
-:root.dark .loading-container,
-:root.dark .empty-content-message {
-  color: #9ca3af;
-}
-
-/* Styles pour le conteneur des boutons Excel dans le formulaire */
+/* Styles pour les conteneurs Excel */
 .form-excel-container {
   margin: 20px 0;
   padding: 15px;
@@ -563,7 +737,7 @@
 
 .form-excel-container:hover {
   background-color: rgba(249, 250, 251, 0.9);
-  border-color: rgba(59, 130, 246, 0.5);
+  border-color: rgba(151, 5, 29, 0.5);
 }
 
 /* Mode sombre */
@@ -574,10 +748,10 @@
 
 :root.dark .form-excel-container:hover {
   background-color: rgba(31, 41, 55, 0.7);
-  border-color: rgba(59, 130, 246, 0.5);
+  border-color: rgba(151, 5, 29, 0.5);
 }
 
-/* Styles pour les boutons Excel dans le formulaire */
+/* Styles pour les boutons Excel */
 .excel-buttons-form {
   display: flex;
   justify-content: space-between;
@@ -658,44 +832,13 @@
   cursor: pointer;
 }
 
-/* Adaptations pour mobile */
-@media (max-width: 640px) {
-  .excel-buttons-form {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  
-  .excel-buttons-actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  
-  .excel-button, .bulk-image-button {
-    flex: 1;
-    min-width: 120px;
-  }
-}
-
-/* En-tête de la liste des emplacements avec boutons d'import/export */
-.locations-header, .content-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.locations-header .section-title, 
-.content-list-header .content-list-title {
-  margin-bottom: 0; /* Supprimer la marge pour l'alignement avec les boutons */
-}
-
-/* Mise en évidence des boutons Excel lors du survol */
+/* Mise en évidence des boutons lors du survol */
 .excel-button:hover, .bulk-image-button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Info-bulle explicative pour les boutons Excel */
+/* Info-bulle explicative pour les boutons */
 .excel-button {
   position: relative;
 }
@@ -726,8 +869,86 @@
   border-color: #374151 transparent transparent transparent;
 }
 
+/* Styles pour les notifications */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  animation: slideIn 0.3s ease-out forwards;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 250px;
+}
 
+@keyframes slideIn {
+  from { transform: translateY(100px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 
+.notification.success {
+  background-color: #10b981;
+}
+
+.notification.error {
+  background-color: #ef4444;
+}
+
+.notification.info {
+  background-color: #3b82f6;
+}
+
+.notification.warning {
+  background-color: #f59e0b;
+}
+
+/* Loading et messages vides */
+.loading-container, 
+.empty-content-message {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-size: 1.1rem;
+  color: #6b7280;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(151, 5, 29, 0.1); }
+  70% { box-shadow: 0 0 0 10px rgba(151, 5, 29, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(151, 5, 29, 0); }
+}
+
+:root.dark .loading-container,
+:root.dark .empty-content-message {
+  background-color: #1e293b;
+  color: #9ca3af;
+}
+
+.loading-container::after {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(151, 5, 29, 0.2);
+  border-radius: 50%;
+  border-top-color: #97051D;
+  animation: spin 1s ease-in-out infinite;
+  vertical-align: middle;
+  margin-left: 0.75rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
@@ -743,6 +964,7 @@
   .content-cards {
     grid-template-columns: 1fr;
   }
+  
   .content-list-header {
     flex-direction: column;
     align-items: flex-start;
@@ -753,5 +975,39 @@
     width: 100%;
     justify-content: space-between;
   }
-
+  
+  .excel-buttons-form {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .excel-buttons-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .excel-button, .bulk-image-button {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .submit-button, .cancel-button {
+    width: 100%;
+  }
+  
+  .features-page {
+    padding: 1rem;
+  }
+  
+  .gallery-container {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
 }

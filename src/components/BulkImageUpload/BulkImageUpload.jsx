@@ -1,6 +1,6 @@
-// src/components/BulkImageUpload/BulkImageUpload.jsx
-import { useState } from 'react';
-import { Upload, Image, Check, X, FolderOpen } from 'lucide-react';
+// src/components/BulkImageUpload/BulkImageUpload.jsx - Version améliorée
+import { useState, useEffect } from 'react';
+import { Upload, Image, Check, X, FolderOpen, Search, RefreshCw } from 'lucide-react';
 import { findBestImageMatch } from '../../utils/excelUtils';
 import './BulkImageUpload.css';
 
@@ -9,12 +9,16 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
   const [files, setFiles] = useState([]);
   const [matches, setMatches] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Ouvrir la modal d'import d'images
   const openModal = () => {
     setIsOpen(true);
     setFiles([]);
     setMatches([]);
+    setProgress(0);
+    setSearchQuery('');
   };
   
   // Fermer la modal
@@ -26,8 +30,11 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
   const handleFilesSelected = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
-    
-    // Tenter de faire correspondre les noms de fichiers avec les titres d'éléments
+    findMatchesForFiles(selectedFiles);
+  };
+  
+  // Trouver des correspondances entre les fichiers et les éléments
+  const findMatchesForFiles = (selectedFiles) => {
     const newMatches = [];
     
     selectedFiles.forEach(file => {
@@ -43,6 +50,17 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
     
     setMatches(newMatches);
   };
+  
+  // Filtrer les correspondances en fonction de la recherche
+  const filteredMatches = matches.filter(match => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    const fileName = match.file.name.toLowerCase();
+    const itemTitle = match.item?.title?.toLowerCase() || '';
+    
+    return fileName.includes(query) || itemTitle.includes(query);
+  });
   
   // Associer manuellement un fichier à un élément
   const assignFileToItem = (fileIndex, itemId) => {
@@ -63,40 +81,57 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
   // Télécharger les images et mettre à jour les éléments
   const uploadImages = async () => {
     setIsUploading(true);
+    setProgress(0);
     let successCount = 0;
     let errorCount = 0;
     
     try {
+      const matchedItems = matches.filter(match => match.status === 'matched' && match.item);
+      const totalItems = matchedItems.length;
+      
       // Pour chaque correspondance avec un élément
-      for (const match of matches) {
-        if (match.status === 'matched' && match.item) {
-          try {
-            // Mettre à jour l'élément avec le fichier image
-            await updateItem({
-              id: match.item.id,
-              imageFile: match.file
-            });
-            successCount++;
-          } catch (err) {
-            console.error(`Erreur lors de la mise à jour de l'image pour ${match.item.title}:`, err);
-            errorCount++;
-          }
+      for (let i = 0; i < matchedItems.length; i++) {
+        const match = matchedItems[i];
+        
+        try {
+          // Mettre à jour l'élément avec le fichier image
+          await updateItem({
+            id: match.item.id,
+            imageFile: match.file
+          });
+          successCount++;
+        } catch (err) {
+          console.error(`Erreur lors de la mise à jour de l'image pour ${match.item.title}:`, err);
+          errorCount++;
         }
+        
+        // Mettre à jour la progression
+        setProgress(Math.round(((i + 1) / totalItems) * 100));
       }
       
       if (onSuccess) {
         onSuccess(`${successCount} images ont été téléchargées avec succès${errorCount > 0 ? ` (${errorCount} erreurs)` : ''}`);
       }
       
-      closeModal();
+      setTimeout(() => {
+        closeModal();
+      }, 1500);
     } catch (error) {
       console.error('Erreur lors du téléchargement des images:', error);
       if (onError) {
         onError('Une erreur est survenue lors du téléchargement des images');
       }
+      setProgress(0);
     } finally {
-      setIsUploading(false);
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 1000);
     }
+  };
+  
+  // Réanalyser les images pour trouver de meilleures correspondances
+  const reanalyzeMatches = () => {
+    findMatchesForFiles(files);
   };
   
   if (!isOpen) {
@@ -126,7 +161,7 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
           {files.length === 0 ? (
             <div className="bulk-image-upload-zone">
               <div className="upload-icon">
-                <Upload size={48} />
+                <Upload size={48} color="#97051D" />
               </div>
               <p>Sélectionnez plusieurs fichiers image à la fois</p>
               <p className="upload-info">Les noms de fichiers seront mis en correspondance avec les titres des éléments</p>
@@ -145,55 +180,113 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
             </div>
           ) : (
             <>
-              <div className="bulk-image-summary">
-                <p>{files.length} fichiers sélectionnés, {matches.filter(m => m.status === 'matched').length} correspondances trouvées</p>
+              <div className="bulk-image-toolbar">
+                <div className="bulk-image-summary">
+                  <div className="matches-count">
+                    <span className="count-value">{matches.filter(m => m.status === 'matched').length}</span>
+                    <span className="count-label">correspondances trouvées sur {files.length} fichiers</span>
+                  </div>
+                  
+                  <button 
+                    className="reanalyze-button"
+                    onClick={reanalyzeMatches}
+                    disabled={isUploading}
+                  >
+                    <RefreshCw size={14} />
+                    <span>Réanalyser</span>
+                  </button>
+                </div>
+                
+                <div className="bulk-image-search">
+                  <Search size={16} />
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-input"
+                    disabled={isUploading}
+                  />
+                  {searchQuery && (
+                    <button 
+                      className="clear-search"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
               
-              <div className="bulk-image-matches">
-                {matches.map((match, index) => (
-                  <div key={index} className={`match-item ${match.status}`}>
-                    <div className="match-file">
-                      <div className="match-thumbnail">
-                        <img src={URL.createObjectURL(match.file)} alt="Aperçu" />
-                      </div>
-                      <div className="match-file-info">
-                        <div className="match-file-name">{match.file.name}</div>
-                        <div className="match-file-size">{(match.file.size / 1024).toFixed(1)} KB</div>
-                      </div>
-                    </div>
-                    
-                    <div className="match-status">
-                      {match.status === 'matched' ? (
-                        <div className="match-success">
-                          <Check size={16} />
-                          <span>Associé à: {match.item.title}</span>
-                        </div>
-                      ) : (
-                        <div className="match-selector">
-                          <select 
-                            onChange={(e) => assignFileToItem(index, e.target.value)}
-                            className="item-selector"
-                            value=""
-                          >
-                            <option value="" disabled>Sélectionner un élément...</option>
-                            {items.map(item => (
-                              <option key={item.id} value={item.id}>{item.title}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                    </div>
+              {isUploading && (
+                <div className="upload-progress">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ width: `${progress}%` }}
+                    ></div>
                   </div>
-                ))}
+                  <div className="progress-text">{progress}% Terminé</div>
+                </div>
+              )}
+              
+              <div className="bulk-image-matches">
+                {filteredMatches.length > 0 ? (
+                  filteredMatches.map((match, index) => (
+                    <div key={index} className={`match-item ${match.status}`}>
+                      <div className="match-file">
+                        <div className="match-thumbnail">
+                          <img src={URL.createObjectURL(match.file)} alt="Aperçu" />
+                        </div>
+                        <div className="match-file-info">
+                          <div className="match-file-name">{match.file.name}</div>
+                          <div className="match-file-size">{(match.file.size / 1024).toFixed(1)} KB</div>
+                        </div>
+                      </div>
+                      
+                      <div className="match-status">
+                        {match.status === 'matched' ? (
+                          <div className="match-success">
+                            <Check size={16} />
+                            <span>Associé à: {match.item.title}</span>
+                          </div>
+                        ) : (
+                          <div className="match-selector">
+                            <select 
+                              onChange={(e) => assignFileToItem(matches.indexOf(match), e.target.value)}
+                              className="item-selector"
+                              value=""
+                              disabled={isUploading}
+                            >
+                              <option value="" disabled>Sélectionner un élément...</option>
+                              {items.map(item => (
+                                <option key={item.id} value={item.id}>{item.title}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-matches">
+                    <p>Aucune correspondance trouvée pour votre recherche</p>
+                  </div>
+                )}
               </div>
             </>
           )}
         </div>
         
         <div className="bulk-image-footer">
-          <button onClick={closeModal} className="cancel-button">
+          <button 
+            onClick={closeModal} 
+            className="cancel-button"
+            disabled={isUploading}
+          >
             Annuler
           </button>
+          
           {files.length > 0 && (
             <button 
               onClick={uploadImages} 

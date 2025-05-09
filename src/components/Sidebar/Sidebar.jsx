@@ -1,8 +1,15 @@
-import { X } from 'lucide-react';
+import { X, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = ({ active, setActivePage, isMobile = false, closeMobileMenu }) => {
+const Sidebar = ({ 
+  active, 
+  setActivePage, 
+  isMobile = false, 
+  closeMobileMenu,
+  isDarkMode,
+  toggleDarkMode
+}) => {
   const navigate = useNavigate();
   
   const menu = [
@@ -46,6 +53,22 @@ const Sidebar = ({ active, setActivePage, isMobile = false, closeMobileMenu }) =
               </button>
             </li>
           ))}
+          
+          {/* Ajout du bouton de toggle pour le thème */}
+          <li className="sidebar-menu-item theme-toggle-item">
+            <button
+              onClick={toggleDarkMode}
+              className="sidebar-menu-button theme-toggle"
+              title={isDarkMode ? "Passer au thème clair" : "Passer au thème sombre"}
+            >
+              <span className="sidebar-menu-icon">
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </span>
+              <span className="sidebar-menu-label">
+                {isDarkMode ? 'Thème Clair' : 'Thème Sombre'}
+              </span>
+            </button>
+          </li>
         </ul>
       </nav>
       
