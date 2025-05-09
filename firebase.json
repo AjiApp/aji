@@ -1,13 +1,7 @@
 {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
   "hosting": {
-    
-    "site": "aji-dashboard",
-
-    "public": "public",
+    "public": "dist",
+    "site": "ajidashboard",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -19,9 +13,5 @@
         "destination": "/index.html"
       }
     ]
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
-  
 }
