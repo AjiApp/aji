@@ -4,7 +4,7 @@ import { Upload, Image, Check, X, FolderOpen, Search, RefreshCw } from 'lucide-r
 import { findBestImageMatch } from '../../utils/excelUtils';
 import './BulkImageUpload.css';
 
-const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
+const BulkImageUpload = ({ items, updateItem, onSuccess, onError, formLayout = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [files, setFiles] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -134,10 +134,12 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
     findMatchesForFiles(files);
   };
   
-  if (!isOpen) {
+  // Render le bouton d'ouverture de modal
+  const renderButton = () => {
+    // Si formLayout est true, appliquer un style différent pour l'intégration dans un formulaire
     return (
       <button 
-        className="bulk-image-button"
+        className={`bulk-image-button ${formLayout ? 'form-layout' : ''}`}
         onClick={openModal}
         title="Import d'images en masse"
       >
@@ -145,6 +147,10 @@ const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
         <span>Import d'images</span>
       </button>
     );
+  };
+
+  if (!isOpen) {
+    return renderButton();
   }
   
   return (

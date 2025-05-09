@@ -62,6 +62,7 @@ const Services = () => {
 
   // Effet pour faire défiler vers l'élément ajouté récemment
   useEffect(() => {
+    
     if (successSubmit && recentlyAddedItem && previewSectionRef.current) {
       previewSectionRef.current.scrollIntoView({ 
         behavior: 'smooth',
@@ -75,6 +76,7 @@ const Services = () => {
       
       return () => clearTimeout(timer);
     }
+    
   }, [successSubmit, recentlyAddedItem]);
 
   // Obtenir l'API correspondant à la catégorie active

@@ -456,50 +456,7 @@ const FeaturesPage = () => {
           </form>
         </div>
         
-        <div className="features-column">
-          <div className="popular-features-card">
-            <h3 className="section-title">Popular Features</h3>
-            
-            <ul className="popular-features-list">
-              {popularFeatures.map((feature, index) => (
-                <li key={index} className="popular-feature-item">
-                  <span className="feature-dot"></span>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="image-management-card">
-            <h3 className="section-title">Image Management</h3>
-            
-            <div className="image-tools">
-              <button 
-                className="image-tool-button"
-                onClick={handleViewGallery}
-                disabled={!contents?.length}
-              >
-                <Image size={18} />
-                <span>View Image Gallery</span>
-              </button>
-              
-              <div className="image-tool-info">
-                <Info size={16} />
-                <span>Manage, crop, and organize your images efficiently</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="support-card">
-            <h3 className="support-title">Need Help?</h3>
-            <p className="support-text">
-              Our support team is available 24/7 to assist you.
-            </p>
-            <button className="support-button">
-              Contact Support
-            </button>
-          </div>
-        </div>
+     
       </div>
       
       {isLoadingContents ? (
