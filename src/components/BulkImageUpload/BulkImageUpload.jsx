@@ -1,0 +1,212 @@
+// src/components/BulkImageUpload/BulkImageUpload.jsx
+import { useState } from 'react';
+import { Upload, Image, Check, X, FolderOpen } from 'lucide-react';
+import { findBestImageMatch } from '../../utils/excelUtils';
+import './BulkImageUpload.css';
+
+const BulkImageUpload = ({ items, updateItem, onSuccess, onError }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  
+  // Ouvrir la modal d'import d'images
+  const openModal = () => {
+    setIsOpen(true);
+    setFiles([]);
+    setMatches([]);
+  };
+  
+  // Fermer la modal
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+  
+  // Gérer la sélection de plusieurs fichiers
+  const handleFilesSelected = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+    
+    // Tenter de faire correspondre les noms de fichiers avec les titres d'éléments
+    const newMatches = [];
+    
+    selectedFiles.forEach(file => {
+      // Chercher une correspondance avec les éléments
+      const matchedItem = findBestImageMatch(file.name, items);
+      
+      newMatches.push({
+        file,
+        item: matchedItem || null,
+        status: matchedItem ? 'matched' : 'unmatched'
+      });
+    });
+    
+    setMatches(newMatches);
+  };
+  
+  // Associer manuellement un fichier à un élément
+  const assignFileToItem = (fileIndex, itemId) => {
+    const newMatches = [...matches];
+    const selectedItem = items.find(item => item.id === itemId);
+    
+    if (selectedItem) {
+      newMatches[fileIndex] = {
+        ...newMatches[fileIndex],
+        item: selectedItem,
+        status: 'matched'
+      };
+      
+      setMatches(newMatches);
+    }
+  };
+  
+  // Télécharger les images et mettre à jour les éléments
+  const uploadImages = async () => {
+    setIsUploading(true);
+    let successCount = 0;
+    let errorCount = 0;
+    
+    try {
+      // Pour chaque correspondance avec un élément
+      for (const match of matches) {
+        if (match.status === 'matched' && match.item) {
+          try {
+            // Mettre à jour l'élément avec le fichier image
+            await updateItem({
+              id: match.item.id,
+              imageFile: match.file
+            });
+            successCount++;
+          } catch (err) {
+            console.error(`Erreur lors de la mise à jour de l'image pour ${match.item.title}:`, err);
+            errorCount++;
+          }
+        }
+      }
+      
+      if (onSuccess) {
+        onSuccess(`${successCount} images ont été téléchargées avec succès${errorCount > 0 ? ` (${errorCount} erreurs)` : ''}`);
+      }
+      
+      closeModal();
+    } catch (error) {
+      console.error('Erreur lors du téléchargement des images:', error);
+      if (onError) {
+        onError('Une erreur est survenue lors du téléchargement des images');
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  if (!isOpen) {
+    return (
+      <button 
+        className="bulk-image-button"
+        onClick={openModal}
+        title="Import d'images en masse"
+      >
+        <Image size={16} />
+        <span>Import d'images</span>
+      </button>
+    );
+  }
+  
+  return (
+    <div className="bulk-image-overlay">
+      <div className="bulk-image-modal">
+        <div className="bulk-image-header">
+          <h3>Import d'images en masse</h3>
+          <button onClick={closeModal} className="modal-close-button">
+            <X size={20} />
+          </button>
+        </div>
+        
+        <div className="bulk-image-content">
+          {files.length === 0 ? (
+            <div className="bulk-image-upload-zone">
+              <div className="upload-icon">
+                <Upload size={48} />
+              </div>
+              <p>Sélectionnez plusieurs fichiers image à la fois</p>
+              <p className="upload-info">Les noms de fichiers seront mis en correspondance avec les titres des éléments</p>
+              <input 
+                type="file" 
+                id="bulk-images" 
+                accept="image/*" 
+                multiple 
+                onChange={handleFilesSelected}
+                className="file-input-hidden"
+              />
+              <label htmlFor="bulk-images" className="upload-button">
+                <FolderOpen size={18} />
+                <span>Sélectionner des images</span>
+              </label>
+            </div>
+          ) : (
+            <>
+              <div className="bulk-image-summary">
+                <p>{files.length} fichiers sélectionnés, {matches.filter(m => m.status === 'matched').length} correspondances trouvées</p>
+              </div>
+              
+              <div className="bulk-image-matches">
+                {matches.map((match, index) => (
+                  <div key={index} className={`match-item ${match.status}`}>
+                    <div className="match-file">
+                      <div className="match-thumbnail">
+                        <img src={URL.createObjectURL(match.file)} alt="Aperçu" />
+                      </div>
+                      <div className="match-file-info">
+                        <div className="match-file-name">{match.file.name}</div>
+                        <div className="match-file-size">{(match.file.size / 1024).toFixed(1)} KB</div>
+                      </div>
+                    </div>
+                    
+                    <div className="match-status">
+                      {match.status === 'matched' ? (
+                        <div className="match-success">
+                          <Check size={16} />
+                          <span>Associé à: {match.item.title}</span>
+                        </div>
+                      ) : (
+                        <div className="match-selector">
+                          <select 
+                            onChange={(e) => assignFileToItem(index, e.target.value)}
+                            className="item-selector"
+                            value=""
+                          >
+                            <option value="" disabled>Sélectionner un élément...</option>
+                            {items.map(item => (
+                              <option key={item.id} value={item.id}>{item.title}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+        
+        <div className="bulk-image-footer">
+          <button onClick={closeModal} className="cancel-button">
+            Annuler
+          </button>
+          {files.length > 0 && (
+            <button 
+              onClick={uploadImages} 
+              className="upload-button"
+              disabled={isUploading || matches.filter(m => m.status === 'matched').length === 0}
+            >
+              {isUploading ? 'Téléchargement...' : 'Télécharger les images'}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BulkImageUpload;

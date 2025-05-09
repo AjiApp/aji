@@ -1,10 +1,14 @@
+// src/pages/Features/Features.jsx
 import { useState } from 'react';
+import { FileSpreadsheet, Upload, Download, Image } from 'lucide-react';
 import { 
   useFeatures, 
   useAddFeature, 
   useUpdateFeature, 
   useDeleteFeature 
 } from '../../hooks/useFeatures';
+import { exportToExcel, importFromExcel, prepareDataForExport, validateImportData } from '../../utils/excelUtils';
+import BulkImageUpload from '../../components/BulkImageUpload/BulkImageUpload';
 import './Features.css';
 
 const FeaturesPage = () => {
@@ -164,6 +168,50 @@ const FeaturesPage = () => {
       setNotification(null);
     }, 3000);
   };
+  
+  // Gérer l'import Excel
+  const handleImportExcel = async (importedData) => {
+    try {
+      // Ajouter chaque élément importé
+      const promises = importedData.map(item => 
+        addFeature.mutateAsync({
+          contentData: {
+            title: item.title,
+            description: item.description,
+            imageUrl: item.imageUrl || null, // Utiliser l'URL d'image importée
+          },
+          imageFile: null // Pas de fichier d'image, on utilise l'URL
+        })
+      );
+      
+      await Promise.all(promises);
+      showNotification(`${importedData.length} éléments importés avec succès`, 'success');
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de l'import des fonctionnalités:", error);
+      showNotification("Erreur lors de l'import", 'error');
+      return false;
+    }
+  };
+  
+  // Mise à jour d'image en masse
+  const handleBulkImageUpdate = async ({ id, imageFile }) => {
+    try {
+      // Mettre à jour l'élément avec la nouvelle image
+      await updateFeature.mutateAsync({
+        id,
+        contentData: {
+          // Nous avons uniquement besoin de mettre à jour l'image
+          // sans toucher aux autres propriétés
+        },
+        imageFile
+      });
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'image:", error);
+      return false;
+    }
+  };
 
   // Si une erreur se produit lors du chargement
   if (isErrorContents) {
@@ -233,6 +281,75 @@ const FeaturesPage = () => {
               )}
             </div>
             
+            {/* Section Excel intégrée dans le formulaire */}
+            <div className="form-excel-container">
+              <div className="excel-buttons-form">
+                <div className="excel-buttons-label">
+                  <FileSpreadsheet size={18} />
+                  <span>Excel Import/Export</span>
+                </div>
+                
+                <div className="excel-buttons-actions">
+                  <button 
+                    className="excel-button export-button"
+                    type="button"
+                    onClick={() => {
+                      const exportData = prepareDataForExport(contents, "features");
+                      exportToExcel(exportData, "features-export", "Features");
+                      showNotification('Export Excel réussi', 'success');
+                    }}
+                    disabled={addFeature.isPending || updateFeature.isPending || !contents?.length}
+                    title="Export to Excel"
+                  >
+                    <Download size={16} />
+                    <span>Export</span>
+                  </button>
+                  
+                  <label className="excel-button import-button" title="Import from Excel">
+                    <Upload size={16} />
+                    <span>Import</span>
+                    <input 
+                      type="file" 
+                      accept=".xlsx,.xls" 
+                      className="file-input-hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        try {
+                          const importedData = await importFromExcel(file);
+                          const validation = validateImportData(importedData, "features");
+                          
+                          if (validation.isValid) {
+                            await handleImportExcel(validation.data);
+                            showNotification(`Import Excel réussi: ${validation.data.length} éléments importés`, 'success');
+                          } else {
+                            showNotification(`Erreurs dans le fichier Excel: ${validation.errors.join(', ')}`, 'error');
+                          }
+                        } catch (error) {
+                          console.error('Import error:', error);
+                          showNotification('Erreur lors de l\'import Excel', 'error');
+                        } finally {
+                          e.target.value = '';
+                        }
+                      }}
+                      disabled={addFeature.isPending || updateFeature.isPending}
+                    />
+                  </label>
+                  
+                  {/* Bouton d'import d'images en masse */}
+                  {contents && contents.length > 0 && (
+                    <BulkImageUpload 
+                      items={contents}
+                      updateItem={handleBulkImageUpdate}
+                      onSuccess={(msg) => showNotification(msg, 'success')}
+                      onError={(msg) => showNotification(msg, 'error')}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            
             <div className="form-actions">
               {editId ? (
                 <>
@@ -297,7 +414,9 @@ const FeaturesPage = () => {
         </div>
       ) : contents.length > 0 ? (
         <div className="content-list-section">
-          <h2 className="content-list-title">Your Features</h2>
+          <div className="content-list-header">
+            <h2 className="content-list-title">Your Features</h2>
+          </div>
           
           <div className="content-cards">
             {contents.map((content) => (
